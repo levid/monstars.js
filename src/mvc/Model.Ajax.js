@@ -2,10 +2,24 @@ Model.Ajax = new Class({
    
     Extends: Model,
     
+    _urls: {},    
+    
     save: function(callback) {
+        this.data.id ?
+            this._update() :
+            this._insert();
         
-        callback(this);
+        if ($type(callback) == 'function')
+            callback(this);
     },
+    
+    _update: function() {
+        
+    }.protect(),
+    
+    _insert: function() {
+        
+    }.protect(),
     
     destroy: function() {
         

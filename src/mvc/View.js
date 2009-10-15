@@ -7,7 +7,7 @@ var View = new Class({
     content: {},
     
     initialize: function(content) {
-        this.content = content || {};
+        this.content = content.data || content || {};
 		this.bindEvents();
     },
     

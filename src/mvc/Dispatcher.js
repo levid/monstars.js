@@ -8,22 +8,13 @@ var Dispatcher = new Class({
     Implements: [Events],
     
     initialize: function() {
-        this.addEvent('loaded',function() {
-            //create Controllers
-            //TODO: search for all Controllers
-            new TasksController();
-            console.log('end dispathcer');
-        });
-        
         //setup DB
         if(window.Database) {
             this.setupDB();
-        } else {
-            this.fireEvent('loaded');
         }
         
- 
-        
+		this.create_controllers();
+        this.loaded();
     },
     
     setupDB: function() {
@@ -36,13 +27,20 @@ var Dispatcher = new Class({
             },
 			'connect':function(e) {
 				//TODO: find all Models and build tables for them
-				db.query('CREATE TABLE IF NOT EXISTS tasks (id integer primary key autoincrement, text varchar(256))').addEvent('result',function() {
-                    that.fireEvent('loaded');
-                });
-               
 			}
         });
-    }
+    }.protect(),
+	
+	create_controllers: function() {
+		var controllers = Core.retrieve_controllers();
+		for(var c = 0; c < controllers.length; c++) {
+			new controllers[c]();
+		}
+	}.protect(),
+	
+	loaded: function() {
+		this.fireEvent('loaded');
+	}.protect()
     
 });
 
