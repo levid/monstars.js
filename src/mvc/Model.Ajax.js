@@ -29,6 +29,10 @@ Model.Ajax = new Class({
     
     destroy: function() {
         
+    },
+    
+    $request: function() {
+        
     }
     
 });

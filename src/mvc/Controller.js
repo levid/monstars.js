@@ -12,13 +12,13 @@ var Controller = new Class({
     },
 	
 	bindEvents: function() {
-		for(var prop in this) {			
-			if($type(this[prop]) == 'function' && prop.substring(0,2) == 'on') {
-				this.element.addEvent(prop.substring(2), this[prop].bind(this), true);
+		var events = this.events;
+		for(var prop in events) {			
+			if(prop != 'load' && $type(events[prop]) == 'function') {
+				this.element.addEvent(prop.replace(/^on/,''), events[prop].bind(this), true);
+			} else if (prop == 'load') {
+				window.addEvent('domready', events[prop].bind(this));
 			}
-		}
-		if($type(this.load) == 'function') {
-			window.addEvent('domready', this.load.bind(this));
 		}
 	}.protect(),
 	

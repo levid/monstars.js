@@ -1,3 +1,8 @@
+/*
+	View.HTML - HTML representation of a Model.
+	
+	Dependencies: mvc/View.js
+*/
 View.HTML = new Class({
     
     Extends: View,

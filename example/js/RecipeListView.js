@@ -2,6 +2,6 @@ var RecipeListView = new Class({
 	
 	Extends: View.HTML,
 	
-	template: '<ul></ul>'
+	template: '<ul id="RecipeList"></ul>'
 	
 });

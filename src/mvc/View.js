@@ -1,3 +1,10 @@
+/*
+	View. - Representation of data from Models. Receives content at contruction
+	or can be updated. Render will apply the content to the template. Template
+	is supplied by the extending class.
+	
+	Dependencies: 
+*/
 var View = new Class({
     
     Implements: Events,
