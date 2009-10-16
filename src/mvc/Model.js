@@ -9,7 +9,7 @@ var Model = new Class({
     data: {},
     
     initialize: function(data) {
-        if(data && $type(data) == 'object'){
+        if(data && ($type(data) == 'object' || $type(data) == 'hash' )){
             for(var prop in this.data) {
                 if(data.hasOwnProperty(prop) && data[prop]) {
                     this.data[prop] = data[prop];
@@ -37,10 +37,14 @@ var Model = new Class({
     
 });
 
+Model.get = function() {
+	throw { message: GetClass.get(this) + ' has not implemented get'};
+}
+
 Model.find = function() {
-    throw { message: this.get_class() + ' has not implemented find'};
+    throw { message: GetClass.get(this) + ' has not implemented find'};
 };
 
 Model.findAll = function() {
-    throw { message: this.get_class() + ' has not implemented findAll'};
+    throw { message: GetClass.get(this) + ' has not implemented findAll'};
 };

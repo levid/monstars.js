@@ -1,6 +1,23 @@
 View.HTML = new Class({
     
     Extends: View,
+	
+	Implements: Class.Occlude,
+	
+	initialize: function(content) {
+		if($type(content) == 'element') {
+			this.element = content;
+			if(this.occlude('View.HTML', this.element))
+				return this.occluded;
+		} else {
+			this.parent(content);
+			this.element = this.render();
+			if(this.occlude('View.HTML', this.element))
+				return this.occluded;
+		}		
+			
+		return this;
+	},
     
     render: function() {
         var template = this.template.substitute(this.content);

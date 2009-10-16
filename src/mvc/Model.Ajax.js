@@ -1,3 +1,7 @@
+/*
+	Model.Ajax - Ajax Model class for Web Server Storage
+	Dependencies: mootools-core/Request.JSON
+*/
 Model.Ajax = new Class({
    
     Extends: Model,
@@ -11,6 +15,8 @@ Model.Ajax = new Class({
         
         if ($type(callback) == 'function')
             callback(this);
+        
+        return this;
     },
     
     _update: function() {
@@ -27,10 +33,15 @@ Model.Ajax = new Class({
     
 });
 
-Model.Ajax.find = function() {
+Model.Ajax.get = function(type, options) {
+    options = options || { id: options };
     
 };
 
-Model.Ajax.findAll = function() {
-    
+Model.Ajax.find = function(type, conditions, options, callback) {
+    var request = new Request.JSON();
+};
+
+Model.Ajax.findAll = function(type, callback) {
+    return this.find(type, null, null, callback);
 };

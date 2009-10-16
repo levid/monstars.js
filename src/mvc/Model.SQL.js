@@ -63,7 +63,7 @@ Model.SQL.find = function(type, condition, options, callback) {
 	var models = [];
 	q.addEvents({
 		'error':function(e) {
-			Feeder.Msg(e.error.details || 'Failed select on ' + table, 'error'); //TODO: Tied into App... de-couple
+			throw 'Failed select on ' + table; 
 		},
 		'result':function(result) {			
 			for(var i = 0; i < result.data.length; i++) {

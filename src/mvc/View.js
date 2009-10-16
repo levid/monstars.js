@@ -7,21 +7,12 @@ var View = new Class({
     content: {},
     
     initialize: function(content) {
-        this.content = content.data || content || {};
-		this.bindEvents();
+        this.content = content instanceof Model ? content.data : content || {};
     },
     
     update: function(newData) {
     	this.content = newData.data || newData;
     },
-	
-	bindEvents: function() {
-		for(var prop in this) {			
-			if($type(this[prop]) == 'function' && prop.substring(0,2) == 'on') {
-				this.addEvent(prop.substring(2).toLowerCase(), this[prop], true);
-			}
-		}
-	}.protect(),
     
     render: function() {
 		this.fireEvent('render');

@@ -6,16 +6,19 @@ var Controller = new Class({
     
     initialize: function() {
 		var el = this.element || this._controller_prefix();
-		this.element = $(el) || document.body; // or throw Error?
+		if(el == 'Document') el = document.body;
+		this.element = $(el) || new Element('div', { id: el}).inject(document.body); // or throw Error?
 		this.bindEvents();
     },
 	
 	bindEvents: function() {
 		for(var prop in this) {			
 			if($type(this[prop]) == 'function' && prop.substring(0,2) == 'on') {
-				console.log('binding %s', prop);
 				this.element.addEvent(prop.substring(2), this[prop].bind(this), true);
 			}
+		}
+		if($type(this.load) == 'function') {
+			window.addEvent('domready', this.load.bind(this));
 		}
 	}.protect(),
 	
@@ -26,6 +29,10 @@ var Controller = new Class({
 	_controller_prefix: function() {
 		var className = this.get_class();
 		return className.replace(/Controller/gi,'');
-	}.protect()
+	}.protect(),
+	
+	toElement: function() {
+		return this.element;
+	}
     
 });
