@@ -1,7 +1,7 @@
 /*
 	View.HTML - HTML representation of a Model.
 	
-	Dependencies: mvc/View.js
+	Dependencies: mvc/View.js, core/Class.Occlude.js
 */
 View.HTML = new Class({
     
@@ -11,14 +11,9 @@ View.HTML = new Class({
 	
 	initialize: function(content) {
 		if($type(content) == 'element') {
-			this.element = content;
-			if(this.occlude('View.HTML', this.element))
-				return this.occluded;
+			return this.fromElement(content);
 		} else {
 			this.parent(content);
-			this.element = this.render();
-			if(this.occlude('View.HTML', this.element))
-				return this.occluded;
 		}		
 			
 		return this;
@@ -26,10 +21,16 @@ View.HTML = new Class({
     
     render: function() {
         var template = this.template.substitute(this.content);
-        this.element = new Element('div',{html: template}).getFirst();		
+        this.element = new Element('div',{html: template}).getFirst();
+		this.occlude(this.get_class());
 		this.parent();
 		return this.element;
     },
+	
+	fromElement: function(element) {
+		var instance = this.occlude(this.get_class(), element) || instance;
+		return instance;
+	},
 	
 	toElement: function() {
 		return this.element ?

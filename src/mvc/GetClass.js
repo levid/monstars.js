@@ -4,9 +4,12 @@
 */
 var GetClass = new Class({
 	get_class: function() {
-		return $H(window).keyOf(this.constructor);
+		return this.$class ?
+			this.$class :
+			this.$class = $H(window).keyOf(this.constructor);
 	}
 });
+
 GetClass.get = function(obj) {
 	return $H(window).keyOf(obj);
 }

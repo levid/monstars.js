@@ -16,7 +16,7 @@ Recipe.find = function(condition, options, callback) {
 };
 
 Recipe.findAll = function(callback) {
-    console.log('hijacked this method');
+    console.log('hijacked Recipe.findAll');
 	var list = [];
 	list[0] = new Recipe({title: 'Pancakes'});
 	list[1] = new Recipe({title: 'Hot Chocolate'});

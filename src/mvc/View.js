@@ -3,26 +3,40 @@
 	or can be updated. Render will apply the content to the template. Template
 	is supplied by the extending class.
 	
-	Dependencies: 
+	Dependencies: core/GetClass.js
 */
 var View = new Class({
     
-    Implements: Events,
+    Implements: [Events, GetClass],
 	
 	template: null,
     
     content: {},
     
     initialize: function(content) {
-        this.content = content instanceof Model ? content.data : content || {};
+        content instanceof Model ?
+			this.model(content) :
+			this.content = content;
     },
     
     update: function(newData) {
-    	this.content = newData.data || newData;
+    	newData instanceof Model ?
+			this.model(newData) :
+			this.content = newData;
     },
     
     render: function() {
 		this.fireEvent('render');
-    }
+    },
+	
+	model: function(model) {
+		if(model) {
+			this.$model = model;
+			this.content = model.data;
+			return this;
+		} else {
+			return this.$model;
+		}
+	}
     
 });

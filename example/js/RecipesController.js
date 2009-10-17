@@ -14,7 +14,7 @@ var RecipesController = new Class({
 		recipes.each(function(r) {
 			this.listRecipe(r, list_view);
 		}.bind(this));
-		this.grab(list_view);
+		$(this).grab(list_view);
 		
 	},
 	
@@ -22,16 +22,17 @@ var RecipesController = new Class({
 		
 		load: function() {
 			Recipe.findAll(this.listRecipes.bind(this));
-			this.grab(new RecipeFormView());
+			$(this).grab(new RecipeFormView());
 		},
 		
 		
 		'onclick:relay(a.delete)': function(e) {
-			//var recipe = e.element.getParent().model();
-			//recipe.destroy();
 			e.stop();
 			var recipe_el = $(e.target).getParent();
-			var view = recipe_el.view(); // OR var view = new RecipeView(recipe_el);
+			var view = new RecipeView(recipe_el);
+			view.model().destroy(function() {
+				$(view).destroy();
+			});
 		},
 		
 		'onsubmit:relay(form)': function(e) {

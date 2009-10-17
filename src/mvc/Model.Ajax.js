@@ -19,16 +19,25 @@ Model.Ajax = new Class({
         return this;
     },
     
-    _update: function() {
-        
+    _update: function(callback) {
+        var that = this;
+        var request = new Request.JSON({
+            url: "/controller/update",
+            method: 'post',
+            onSuccess: function(response) {
+                callback(that)
+            }
+        }).send(Hash.toQueryString(this.data))
     }.protect(),
     
     _insert: function() {
         
     }.protect(),
     
-    destroy: function() {
-        
+    destroy: function(callback) {
+        if($type(callback) == 'function')
+            callback(this);
+        return this;
     },
     
     $request: function() {
@@ -37,7 +46,7 @@ Model.Ajax = new Class({
     
 });
 
-Model.Ajax.get = function(type, options) {
+Model.Ajax.get = function(type, options, callback) {
     options = options || { id: options };
     
 };
