@@ -4,9 +4,7 @@
 */
 Model.Ajax = new Class({
    
-    Extends: Model,
-    
-    _urls: {},    
+    Extends: Model,   
     
     save: function(callback) {
         this.data.id ?
@@ -17,12 +15,12 @@ Model.Ajax = new Class({
     },
     
     _update: function(callback) {
-        var request = this.$request('/controller/edit', callback)
+        var request = this.$request(this.url('update'), callback)
         return this;
     }.protect(),
     
     _insert: function(callback) {
-        var request = this.$request('/controller/add', callback)
+        var request = this.$request(this.url('insert'), callback)
         return this;
     }.protect(),
     
@@ -34,7 +32,6 @@ Model.Ajax = new Class({
     
     $request: function(url, callback) {
         var that = this;
-        return null;
         return request = new Request.JSON({
             url: url,
             method: 'post',
@@ -52,7 +49,7 @@ Model.Ajax = new Class({
         var method = (STATIC[action] && STATIC[action].substitute(this.data)) || action;
         var uri = root + controller_name + '/' + method;
         return uri;
-    }
+    }.protect()
     
 });
 
