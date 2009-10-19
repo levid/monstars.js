@@ -21,7 +21,7 @@ var RecipesController = new Class({
 	events: {
 		
 		load: function() {
-			Recipe.findAll(this.listRecipes.bind(this));
+			console.log(Recipe.findAll(this.listRecipes.bind(this)));
 			$(this).grab(new RecipeFormView());
 		},
 		

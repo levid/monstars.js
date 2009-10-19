@@ -9,13 +9,19 @@ var Recipe = new Class({
 	
 });
 
-//TODO: find way to automagically do this?
-Recipe.find = function(condition, options, callback) {
-    //TODO: replace Model.Ajax with Recipe.parent?
-    return Model.Ajax.find(this,condition,options, callback);
+Recipe.$urls = {
+	'controller_name':'recipes',
+	'update': 'save',
+	'insert': 'new',
+	'find': 'all',
+	'delete': 'kill'
 };
 
-Recipe.findAll = function(callback) {
+//TODO: find way to automagically do this?
+Recipe.get = Model.Ajax.get;
+Recipe.find = Model.Ajax.find;
+
+/*Recipe.findAll = function(callback) {
     console.log('hijacked Recipe.findAll');
 	var list = [];
 	list[0] = new Recipe({title: 'Pancakes'});
@@ -24,5 +30,5 @@ Recipe.findAll = function(callback) {
 	if($type(callback) == 'function') {
 		callback(list);
 	}
-	//return Model.Ajax.findAll(this, callback);
-};
+};*/
+Recipe.findAll = Model.Ajax.findAll;
