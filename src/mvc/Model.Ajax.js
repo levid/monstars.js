@@ -20,7 +20,13 @@ Model.Ajax = new Class({
     }.protect(),
     
     _insert: function(callback) {
-        var request = this.$request(this.url('insert'), callback)
+        var that = this;
+        var success = function(response) {
+            $splat(response).each(function(obj) {
+                that.set(obj);
+            });
+        };
+        var request = this.$request(this.url('insert'), callback, success)
         return this;
     }.protect(),
     
@@ -30,14 +36,16 @@ Model.Ajax = new Class({
         return this;
     },
     
-    $request: function(url, callback) {
+    $request: function(url, callback, success) {
         var that = this;
         return request = new Request.JSON({
             url: url,
             method: 'post',
             onSuccess: function(response) {
+                if($type(success) == 'function')
+                    success(response);
                 if($type(callback) == 'function')
-                    callback(that)
+                    callback(that);
             }
         }).send(Hash.toQueryString(this.data));
     }.protect(),
