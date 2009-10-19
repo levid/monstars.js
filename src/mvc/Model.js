@@ -11,9 +11,7 @@ var Model = new Class({
     initialize: function(data) {
         this.set(data);        
     },
-	
-	
-    
+
     set: function(prop, value) {
     	if(prop && ($type(prop) == 'object' || $type(prop) == 'hash')) {
 			for(var key in this.data) {

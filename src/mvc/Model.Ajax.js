@@ -23,7 +23,12 @@ Model.Ajax = new Class({
         var that = this;
         var success = function(response) {
             $splat(response).each(function(obj) {
-                that.set(obj);
+                if(obj.fields) {
+                    obj.fields.id = obj.fields.id || obj.pk;
+                    that.set(obj.fields)
+                } else {
+                    that.set(obj);
+                }                
             });
         };
         var request = this.$request(this.url('insert'), callback, success)
