@@ -17,8 +17,8 @@ var Model = new Class({
     set: function(prop, value) {
     	if(prop && ($type(prop) == 'object' || $type(prop) == 'hash')) {
 			for(var key in this.data) {
-                if(data.hasOwnProperty(key) && data[key]) {
-                    this.data[key] = data[key];
+                if(prop.hasOwnProperty(key) && data[key]) {
+                    this.data[key] = prop[key];
                 }
             }
 		} else {
