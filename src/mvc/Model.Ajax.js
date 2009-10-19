@@ -21,7 +21,7 @@ Model.Ajax = new Class({
         return this;
     }.protect(),
     
-    _insert: function() {
+    _insert: function(callback) {
         var request = this.$request('/controller/add', callback)
         return this;
     }.protect(),
