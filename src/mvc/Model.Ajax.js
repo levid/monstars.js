@@ -64,7 +64,7 @@ Model.Ajax.get = function(type, options, callback) {
 Model.Ajax.find = function(conditions, options, callback) {
     var STATIC = window[GetClass.get(this)].$urls || {};
         var root = STATIC.root || '/';
-        var controller_name = STATIC.controller_name || this.get_class().toLowerCase() + 's';
+        var controller_name = STATIC.controller_name || GetClass.get(this).toLowerCase() + 's';
         var method = (STATIC['find'] && STATIC['find'].substitute(this.data)) || 'find';
         var uri = root + controller_name + '/' + method;
     
