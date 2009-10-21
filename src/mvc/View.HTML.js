@@ -28,7 +28,8 @@ View.HTML = new Class({
     },
 	
 	fromElement: function(element) {
-		var instance = this.occlude(this.get_class(), element) || instance;
+		var instance = this.occlude(this.get_class(), element) || this;
+		this.element = element;
 		return instance;
 	},
 	
@@ -36,6 +37,22 @@ View.HTML = new Class({
 		return this.element ?
 			this.element :
 			this.element = this.render();
+	},
+	
+	model: function(model) {
+		var $model = this.parent(model);
+		if(!$model) {
+			var match = this.element.className.match(/\b([a-zA-Z]+)_(\d+)\b/);
+			var className = match[1],
+				id = match[2];
+			
+			var klass = window[className.capitalize()];
+			if(klass && klass instanceof Model) {
+				//$model = klass.get(id);
+			}
+			
+		}
+		return $model;
 	}
     
 });
