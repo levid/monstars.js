@@ -45,5 +45,5 @@ var Dispatcher = new Class({
 });
 
 window.addEvent('domready',function() {
-    new Dispatcher();
+	new Dispatcher();
 });
