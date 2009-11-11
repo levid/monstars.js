@@ -24,7 +24,7 @@ Model.Ajax = new Class({
         var success = function(response) {
             $splat(response).each(function(obj) {
                 if(obj.fields) {
-                    obj.fields.id = obj.fields.id || obj.pk;
+                    obj.fields.id = obj.fields.id || obj.pk || obj.id;
                     that.set(obj.fields)
                 } else {
                     that.set(obj);
@@ -72,22 +72,21 @@ Model.Ajax.get = function(type, options, callback) {
 };
 
 Model.Ajax.find = function(conditions, options, callback) {
-    var STATIC = window[GetClass.get(this)].$urls || {};
-        var root = STATIC.root || '/';
-        var controller_name = STATIC.controller_name || GetClass.get(this).toLowerCase() + 's';
-        var method = (STATIC['find'] && STATIC['find'].substitute(this.data)) || 'find';
-        var uri = root + controller_name + '/' + method;
-    
-    
-    var request = new Request.JSON({
-        url: uri,
-        method: 'get',
-        onSuccess: function(response) {
-            if($type(callback) == 'function')
-                callback(that)
-        }
-    }).send(Hash.toQueryString(conditions));
-    console.log(request);
+    var STATIC = window[GetClass.get(this)].$urls || {},
+        root = STATIC.root || '/',
+        controller_name = STATIC.controller_name || GetClass.get(this).toLowerCase() + 's',
+        method = (STATIC['find'] && STATIC['find'].substitute(this.data)) || 'find',
+        uri = root + controller_name + '/' + method,
+        
+        request = new Request.JSON({
+			url: uri,
+			method: 'get',
+			onSuccess: function(response) {
+				throw new Error('should instantiate the response before giving to callback');
+				if($type(callback) == 'function')
+					callback(that)
+			}
+		}).send(Hash.toQueryString(conditions));
 };
 
 Model.Ajax.findAll = function(callback) {

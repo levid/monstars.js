@@ -8,7 +8,7 @@ var RecipesController = new Class({
 	},
 	
 	listRecipes: function(recipes) {
-		list_view = $(this).getElement('#RecipeList') || new RecipeListView();
+		var list_view = $(this).getElement('#RecipeList') || new RecipeListView();
 		
 		// TODO: should be in View
 		recipes.each(function(r) {
@@ -21,7 +21,7 @@ var RecipesController = new Class({
 	events: {
 		
 		load: function() {
-			console.log(Recipe.findAll(this.listRecipes.bind(this)));
+			Recipe.findAll(this.listRecipes.bind(this));
 			$(this).grab(new RecipeFormView());
 		},
 		

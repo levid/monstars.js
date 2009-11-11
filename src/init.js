@@ -7,12 +7,12 @@ var init = this.init = function() {
 	//grab directory of this script tag
 	var root_dir = init.get_root(self);
 	
-	//get app dir from GET
-	var app_dir = init.get_app(self);
-	
 	//setup DOMready function, since MooTools might get loaded too late
 	init.domready();
 	
+	//get app dir from GET
+	var app_dir = init.get_app(self);
+		
 	//include APP
 	init.include('config.js', app_dir);
 };
@@ -48,7 +48,7 @@ init.get_app = function(self_script) {
 		throw new Error('Must include app directory after init.js');
 	
 	var dots = path.match(/\.\.\//g);
-	if(dots.length) {
+	if(dots && dots.length) {
 		var root = this.root;
 		for(var i = 0; i < dots.length; i++) {
 			root = root.replace(/[a-zA-Z0-9\-_]+\/$/,'');
@@ -134,7 +134,10 @@ init.queue = function(files, path) {
 	path = path || this.root;
 	if(path.substring(path.length-1) != '/')  path += '/';
 	for(var i = 0; i < files.length; i++) {
-		queue.push(path + files[i]);
+		if(typeof files[i] == 'string')
+			queue.push(path + files[i]);
+		else if(typeof files[i] == 'function')
+			queue.push(files[i]);
 	}
 	if(!including)
 		this.queue_next();
@@ -144,11 +147,20 @@ var including = false;
 init.queue_next = function() {
 	if(including) return;
 	including = true;
-	var script = this.include(queue.shift(), function() {
+	
+	var thing_to_include = queue.shift();
+	if(typeof thing_to_include == 'string') {
+		var script = this.include(thing_to_include, function() {
+			including = false;
+			if(queue.length)
+				init.queue_next();
+		});
+	} else if (typeof thing_to_include == 'function') {
+		thing_to_include();
 		including = false;
 		if(queue.length)
 			init.queue_next();
-	});
+	}
 	
 }
 
@@ -162,7 +174,7 @@ init.mvc = function() {
 	//maybe load Dispatcher last?
 	var standard_files = ['GetClass','Element.Serialize','Model','Controller','View'];//,'Dispatcher'];
 	var files;
-	if(arguments.length) {
+	if(arguments) {
 		var extra_files = Array.prototype.slice.apply(arguments);
 		files = standard_files.concat(extra_files);
 	} else {
@@ -179,14 +191,14 @@ init.app = function(app_funcs) {
 };
 
 init.models = function() {
-	if(arguments.length) {
+	if(arguments) {
 		var files = Array.prototype.slice.apply(arguments);
 	}
 	this.queue(files, this.app_dir + 'models');
 };
 
 init.controllers = function() {
-	if(arguments.length) {
+	if(arguments) {
 		var files = Array.prototype.slice.apply(arguments);
 	}
 	for(var i = 0; i < files.length; i++) {
@@ -196,13 +208,40 @@ init.controllers = function() {
 };
 
 init.views = function() {
-	if(arguments.length) {
+	if(arguments) {
 		var files = Array.prototype.slice.apply(arguments);
 	}
 	for(var i = 0; i < files.length; i++) {
 		files[i] = files[i].replace(/\.js$/,'').replace('View','') + 'View';
 	}
 	this.queue(files, this.app_dir + 'views');
+};
+
+var TESTS = [];
+
+init.tests = function() {
+	if(arguments) {
+		var files = Array.prototype.slice.apply(arguments);
+	}
+	for(var i = 0; i < files.length; i++) {
+		files[i] = files[i].replace(/\.js$/,'').replace('Test','') + 'Test';
+		TESTS.push(files[i]);
+	}
+	this.queue(files, init.app_dir);
+	this.queue(init.testsuite);
+};
+
+
+init.testsuite = function() {
+	if(!init.including && !queue.length) {
+		for(var T in TESTS) {
+			if(!TESTS.hasOwnProperty(T)) continue;
+			var testCase = typeof TESTS[T] == 'string' ? window[TESTS[T]] : TESTS[T];
+			testCase.run();
+		}
+	} else {
+		setTimeout(arguments.callee, 1);
+	}
 };
 
 init();

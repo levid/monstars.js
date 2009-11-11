@@ -14,18 +14,32 @@ View.HTML = new Class({
 			return this.fromElement(content);
 		} else {
 			this.parent(content);
-		}		
+		}
 			
 		return this;
 	},
     
     render: function() {
-        var template = this.template.substitute(this.content);
+		var template = this.template.substitute(this.content);//this.substitute(this.content);
         this.element = new Element('div',{html: template}).getFirst();
 		this.occlude(this.get_class());
 		this.parent();
 		return this.element;
     },
+	
+	/*substitute: function(object) {
+		var that = this;
+		return this.template.replace(/\\?\{([^{}]+)\}/g, function(match, name){
+			if (match.charAt(0) == '\\') return match.slice(1);
+			return (object[name] != undefined) ?
+				(($type(object[name]) == 'object' || $type(object[name]) == 'hash') ? 'ssss' : object[name]) :
+				'';
+		});
+	}.protect(),
+	
+	subview: function(prop, models) {
+		return 'poop';
+	}.protect(),*/
 	
 	fromElement: function(element) {
 		var instance = this.occlude(this.get_class(), element) || this;
@@ -37,22 +51,5 @@ View.HTML = new Class({
 		return this.element ?
 			this.element :
 			this.element = this.render();
-	},
-	
-	model: function(model) {
-		var $model = this.parent(model);
-		if(!$model) {
-			var match = this.element.className.match(/\b([a-zA-Z]+)_(\d+)\b/);
-			var className = match[1],
-				id = match[2];
-			
-			var klass = window[className.capitalize()];
-			if(klass && klass instanceof Model) {
-				//$model = klass.get(id);
-			}
-			
-		}
-		return $model;
 	}
-    
 });

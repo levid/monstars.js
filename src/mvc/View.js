@@ -14,9 +14,7 @@ var View = new Class({
     content: {},
     
     initialize: function(content) {
-        content instanceof Model ?
-			this.model(content) :
-			this.content = content;
+        this.update(content);
     },
     
     update: function(newData) {

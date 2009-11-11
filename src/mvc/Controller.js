@@ -22,10 +22,6 @@ var Controller = new Class({
 		}
 	}.protect(),
 	
-	grab: function(el, where) {
-		this.element.grab(el, where);
-	},
-	
 	_controller_prefix: function() {
 		var className = this.get_class();
 		return className.replace(/Controller/gi,'');
