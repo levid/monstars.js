@@ -6,7 +6,7 @@ Element.implement('serialize', function() {
 			Element.getSelected(el).map(function(o){ return o.value; }) :
 			((el.type == 'radio' || el.type == 'checkbox') && !el.checked) ?
 				null :
-				el.value;
+				(el.type == 'checkbox' ? el.value : el.value);
 		$splat(n).each(function(val) {
 			if ($type(val) != 'undefined') {
 				values[el.name] = val;

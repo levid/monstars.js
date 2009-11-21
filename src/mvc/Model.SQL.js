@@ -5,6 +5,8 @@
 Model.SQL = new Class({
    
     Extends: Model,
+	
+	$class: 'Model.SQL',
     
     initialize: function(data) {
         this.parent(data);

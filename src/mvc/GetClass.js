@@ -2,33 +2,48 @@
 	GetClass - a class to implement into other classes that provides get_class
 	function. Returns classname of the instance. Uses Hash.findKey
 */
-(function() {
-var searched = {}; //to prevent circular lookups
+// [object Object].get_class() == 'Model.Ajax'
+
+
 Hash.implement({
     findKey: function(key) {  
-        var val = this.keyOf(key);
+        if(key === null || typeof key == 'undefined') return null;
+		var val = this.keyOf(key);
         if(val && val != 'constructor') return val;
         for(var prop in this) {   
             if(this.hasOwnProperty(prop) && typeof this[prop] == 'object') {
+				if($type(this[prop]) == 'window' || $type(this[prop]) == 'element' || $type(this[prop]) == 'document') continue; // HACK: prevents window.top circular loop, but no others.
+				console.log('this: %o, prop: %o',this, prop);
+				//alert(this+ ' ' + prop);
+				
 				val = $H(this[prop]).findKey(key);
                 if(val) {
-					return this.findKey(this[prop]) + '.' + val;
+					return this.findKey(prop) + '.' + val;
                 }
             }
         }
 		return '';
     }   
 });
-})();
+
 var GetClass = new Class({
 	get_class: function() {
 		return this.$class ?
 			this.$class :
-			this.$class = $H(window).keyOf(this.constructor);//.findKey(this.constructor);
+			this.$class = GetClass.get_class(this);//keyOf(this.constructor);
 	}
 });
 
 GetClass.get = function(obj) {
-	//console.log(obj);
-	return $H(window).keyOf(obj);//.findKey(obj);
+	return $H(window).keyOf(obj);//.keyOf(obj);
+}
+GetClass.getName = function(obj) {
+	return obj.$name ?
+		obj.$name :
+		obj.$name = obj.prototype.$class || GetClass.get(obj)
+};
+GetClass.get_class = function(obj) {
+	return obj.$class ?
+		obj.$class :
+		obj.$class = (obj.constructor && GetClass.get(obj.constructor));
 }

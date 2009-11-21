@@ -1,7 +1,7 @@
 var ViewTest = new TestCase({
 	test_noContent: function() {
 		var v = new this.TV();
-		this.assertFalse(v.content);
+		this.assertNull(v.content);
 	},
 	test_update: function() {
 		var v = new this.TV();

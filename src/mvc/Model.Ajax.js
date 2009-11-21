@@ -4,7 +4,9 @@
 */
 Model.Ajax = new Class({
    
-    Extends: Model,   
+    Extends: Model,
+    
+    $class: 'Model.Ajax',
     
     save: function(callback) {
         this.data.id ?

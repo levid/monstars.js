@@ -5,6 +5,8 @@
 Model.Cookie = new Class({
    
     Extends: Model,
+	
+	$class: 'Model.Cookie',
     
     initialize: function(data) {
         this.parent(data);
@@ -31,11 +33,11 @@ Model.Cookie = new Class({
     
 });
 //TODO: consider how new models are supposed to integrate find
-Model.Cookie.find = function(type, condition, options, callback) {
+Model.Cookie.find = function(condition, options, callback) {
 	
-	return models;
+	return null;
 };
 
 Model.Cookie.findAll = function(type, callback) {
-    return this.find(type, null, null, callback);
+    return this.find(null, null, callback);
 };

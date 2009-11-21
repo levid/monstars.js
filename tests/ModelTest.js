@@ -17,6 +17,7 @@ var ModelTest = new TestCase({
 		
 		var m = new this.TestModel({id: 44123, title:'Init Test', fake: "Won't Exist"});
 		
+		this.assertTrue(m instanceof Model);
 		this.assertEquals(m.get('id'), 44123);
 		this.assertEquals(m.get('title'), 'Init Test');
 		this.assertFalse(m.get('fake'));

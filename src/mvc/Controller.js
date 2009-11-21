@@ -14,8 +14,9 @@ var Controller = new Class({
 	bindEvents: function() {
 		var events = this.events;
 		for(var prop in events) {			
+			var ev = prop.replace(/^on/,'');
 			if(prop != 'load' && $type(events[prop]) == 'function') {
-				this.element.addEvent(prop.replace(/^on/,''), events[prop].bind(this), true);
+				this.element.addEvent(ev, events[prop].bind(this), true);
 			} else if (prop == 'load') {
 				window.addEvent('domready', events[prop].bind(this));
 			}
@@ -23,8 +24,7 @@ var Controller = new Class({
 	}.protect(),
 	
 	_controller_prefix: function() {
-		var className = this.get_class();
-		return className.replace(/Controller/gi,'');
+		return this.get_class().replace(/Controller/gi,'');
 	}.protect(),
 	
 	toElement: function() {

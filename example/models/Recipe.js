@@ -4,7 +4,8 @@ var Recipe = new Class({
 	
 	data: {
 		id: null,
-		title: null
+		title: null,
+		ingredients: null
 	}
 	
 });
@@ -18,14 +19,14 @@ Recipe.$urls = {
 };
 
 //TODO: find way to automagically do this?
-//Recipe.get = Model.Ajax.get;
-//Recipe.find = Model.Ajax.find;
-Recipe.extend(Model.Ajax)
-//$extend(Recipe, );
+Recipe.get = Model.Ajax.get;
+Recipe.find = Model.Ajax.find;
+
+
 Recipe.findAll = function(callback) {
     console.log('hijacked Recipe.findAll');
 	var list = [];
-	list[0] = new Recipe({id:1, title: 'Pancakes' });
+	list[0] = new Recipe({id:1, title: 'Pancakes', ingredients: ['Milk', 'Flour'] });
 	list[1] = new Recipe({id:2, title: 'Hot Chocolate'});
 	
 	if($type(callback) == 'function') {

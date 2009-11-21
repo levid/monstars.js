@@ -31,11 +31,14 @@ var TestCase = new Class({
 	
 	conclude: function() {
 		var passedCount = new Element('span', { text: this._passed, 'class':'pass' });
-		var failedCount = new Element('span', { text: this._failed, 'class':'fail' })
-		var warnedCount = new Element('span', { text: this._warned, 'class':'warn' })
-		this.testBox.getElement('.summary').grab(passedCount);
-		this.testBox.getElement('.summary').grab(warnedCount);
-		this.testBox.getElement('.summary').grab(failedCount);
+		var warnedCount = new Element('span', { text: this._warned, 'class':'warn' });
+		var failedCount = new Element('span', { text: this._failed, 'class':'fail' });
+		//if(this._passed)
+			this.testBox.getElement('.summary').grab(passedCount);
+		//if(this._warned)
+			this.testBox.getElement('.summary').grab(warnedCount);
+		
+			this.testBox.getElement('.summary').grab(failedCount);		
 		if(this._failed) {
 			this.testBox.removeClass('closed');
 		}
@@ -66,18 +69,24 @@ var TestCase = new Class({
 	},
 	
 	pass: function(test) {
-		this.testBox.grab(new Element('div', {'class': 'test pass', text: 'Passed: '+ test}));
+		this.results('pass', 'Passed: ' + test);
 		this._passed++;
 	}.protect(),
 	
 	fail: function(test, error) {
-		this.testBox.grab(new Element('div', {'class': 'test fail', text: 'Failed: '+ test +' - '+ error}));
+		this.results('fail', 'Failed: '+ test +' - '+ error);
 		this._failed++;
 	}.protect(),
 	
 	warn: function(test) {
-		this.testBox.grab(new Element('div', {'class': 'test warn', text: 'Warn: '+ test +' - No Assertions were made.'}));
+		this.results('warn', 'Warn: '+ test +' - No Assertions were made.');
 		this._warned++;
+	}.protect(),
+	
+	results: function(status, msg) {
+		var res = new Element('div', {'class': 'test '+status, text: msg});
+		//res.grab(new Element('pre', { html: '<code></code>' }))
+		this.testBox.grab(res);
 	}.protect(),
 	
 	assertEquals: function(val1, val2) {
@@ -93,7 +102,12 @@ var TestCase = new Class({
 	assertFalse: function(val) {
 		if(val) throw new Error(val+' is not False');
 		this._asserts++;
-	}.protect()
+	}.protect(),
+	
+	assertNull: function(val) {
+		if(val !== null && typeof val != 'undefined') throw new Error(val+' is not null');
+		this._asserts++;
+	}
 	
 });
 

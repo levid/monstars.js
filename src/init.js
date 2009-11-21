@@ -14,7 +14,7 @@ var init = this.init = function() {
 	var app_dir = init.get_app(self);
 		
 	//include APP
-	init.include('config.js', app_dir);
+	init.queue('config.js', app_dir);
 };
 
 init.head = document.getElementsByTagName('head')[0];
