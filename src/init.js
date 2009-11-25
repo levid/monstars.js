@@ -2,45 +2,48 @@
 
 var init = this.init = function() {
 	//get *this* script tag
-	var self = init.get_self_script();
+	var self = get_self_script();
 	
 	//grab directory of this script tag
-	var root_dir = init.get_root(self);
+	get_root(self);
 	
 	//setup DOMready function, since MooTools might get loaded too late
-	init.domready();
+	domready();
 	
 	//get app dir from GET
-	var app_dir = init.get_app(self);
+	get_app(self);
 		
 	//include APP
-	init.queue('config.js', app_dir);
+	init.queue('config.js', APP_DIR);
 };
 
-init.head = document.getElementsByTagName('head')[0];
+var HEAD = document.getElementsByTagName('head')[0];
 
-init.get_self_script = function() {
-	var scripts = init.head.getElementsByTagName('script');
+var get_self_script = function() {
+	var scripts = HEAD.getElementsByTagName('script');
+	var self_script;
 	for(var i = 0, len = scripts.length; i < len; i++) {
 		var src = scripts[i].src;
 		if(src.match(/init\.js/)) {
-			this.self_script = scripts[i];
+			self_script = scripts[i];
 			break;
 		}
 	}
 	
-	return this.self_script;
+	return self_script;
 };
 
-init.get_dir = function(script) {
+var get_dir = function(script) {
 	return script.src.replace(/[a-zA-Z0-9\-_]+\.js(.*)$/,'')
 };
 
-init.get_root = function(self_script) {
-	return this.root = this.get_dir(self_script);
+var ROOT;
+var get_root = function(self_script) {
+	return ROOT = get_dir(self_script);
 };
 
-init.get_app = function(self_script) {
+var APP_DIR;
+var get_app = function(self_script) {
 	try {
 		var path = self_script.src.match(/init\.js\?(.*)$/)[1];
 	} catch(e) {}
@@ -49,16 +52,16 @@ init.get_app = function(self_script) {
 	
 	var dots = path.match(/\.\.\//g);
 	if(dots && dots.length) {
-		var root = this.root;
+		var root = ROOT;
 		for(var i = 0; i < dots.length; i++) {
 			root = root.replace(/[a-zA-Z0-9\-_]+\/$/,'');
 		}
 		path = root + path.replace(/\.\.\//g,'').replace(/\/$/,'') + '/';
 	}
-	return this.app_dir = path;
+	return APP_DIR = path;
 };
 
-init.domready = function() {
+var domready = function() {
 	var loaded = false;
 	var domready = function(){
 		loaded = true;
@@ -111,63 +114,88 @@ init.domready = function() {
 		})();
 	}
 };
-
-init.include = function(file, callback) {
-	var script = document.createElement('script');
-	script.type = 'text/javascript';
-	script.src = file.replace(/\.js$/,'') + '.js';
-	if(callback && typeof callback == 'function') {
-		script.onload = callback;
-		script.onreadystatechange = function() {
-			if(this.readyState == 'complete') {
-				callback();
-			}
-		}
-	}
-	this.head.appendChild(script);
-	return script;
+var SCRIPTS = [];
+function Script(file) {
+	var fileName = this.fileName = file.replace(/\.js$/,'') + '.js';
+	if(SCRIPTS[fileName])
+		return SCRIPTS[fileName];
+	else
+		return SCRIPTS[fileName] = this;
 };
 
-var queue = [];
+Script.prototype = {
+	
+	include: function(callback, type) {
+		var fileName = this.fileName;
+		var that = this;
+		var loaded = function() {
+			that._loaded = true;
+			callback()
+		}
+		
+		var script = document.createElement('script');
+		script.type = type || 'text/javascript';
+		script.src = fileName;
+		if(callback && typeof callback == 'function') {
+			script.onload = loaded;
+			script.onreadystatechange = function() {
+				if(this.readyState == 'complete') {
+					loaded();
+				}
+			}
+		}
+		if(this.script) {
+			HEAD.replaceChild(script, this.script);
+		} else {
+			HEAD.appendChild(script);
+		}
+		SCRIPTS[fileName] = this;
+		return this.script = script;
+	},
+	
+	load: function(callback) {
+		return this.include(callback, 'text/html');
+	},
+	
+	execute: function(callback) {
+		return this.include(callback);
+	},
+	
+	isLoaded: function() {
+		return this._loaded;
+	}
+	
+	
+};
+
+var QUEUE = [];
 init.queue = function(files, path) {
 	if(!(files instanceof Array)) files = [files];
-	path = path || this.root;
+	path = path || ROOT;
 	if(path.substring(path.length-1) != '/')  path += '/';
 	for(var i = 0; i < files.length; i++) {
 		if(typeof files[i] == 'string')
-			queue.push(path + files[i]);
-		else if(typeof files[i] == 'function')
-			queue.push(files[i]);
+			var S = new Script(path + files[i])
+			S.load(execute_next);
+			QUEUE.push(S);
 	}
-	if(!including)
-		this.queue_next();
 };
 
 var including = false;
-init.queue_next = function() {
-	if(including) return;
-	including = true;
-	
-	var thing_to_include = queue.shift();
-	if(typeof thing_to_include == 'string') {
-		var script = this.include(thing_to_include, function() {
-			including = false;
-			if(queue.length)
-				init.queue_next();
+
+var execute_next = function() {
+	if(QUEUE[0] && QUEUE[0].isLoaded()) {
+		var script = QUEUE.shift();
+		script.execute(function() {
+			execute_next();
 		});
-	} else if (typeof thing_to_include == 'function') {
-		thing_to_include();
-		including = false;
-		if(queue.length)
-			init.queue_next();
-	}
-	
+	}	
 }
 
 init.core = function(path) {
 	
 	var core_files = ['Core','mootools-1.2.4-core','mootools-1.2.4.1-more'];
-	this.queue(core_files, this.root + 'core');
+	this.queue(core_files, ROOT + 'core');
 };
 
 init.mvc = function() {
@@ -180,21 +208,21 @@ init.mvc = function() {
 	} else {
 		files = standard_files;
 	}
-	this.queue(files, this.root + 'mvc');
+	this.queue(files, ROOT + 'mvc');
 };
 
 init.app = function(app_funcs) {
 	if(typeof app_funcs == 'function') {
 		app_funcs();
 	}
-	init.queue('Dispatcher', this.root + 'mvc');
+	init.queue('Dispatcher', ROOT + 'mvc');
 };
 
 init.models = function() {
 	if(arguments) {
 		var files = Array.prototype.slice.apply(arguments);
 	}
-	this.queue(files, this.app_dir + 'models');
+	this.queue(files, APP_DIR + 'models');
 };
 
 init.controllers = function() {
@@ -204,7 +232,7 @@ init.controllers = function() {
 	for(var i = 0; i < files.length; i++) {
 		files[i] = files[i].replace(/\.js$/,'').replace('Controller','') + 'Controller';
 	}
-	this.queue(files, this.app_dir + 'controllers');
+	this.queue(files, APP_DIR + 'controllers');
 };
 
 init.views = function() {
@@ -214,7 +242,7 @@ init.views = function() {
 	for(var i = 0; i < files.length; i++) {
 		files[i] = files[i].replace(/\.js$/,'').replace('View','') + 'View';
 	}
-	this.queue(files, this.app_dir + 'views');
+	this.queue(files, APP_DIR + 'views');
 };
 
 var TESTS = [];
