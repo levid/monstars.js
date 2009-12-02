@@ -174,21 +174,34 @@ init.queue = function(files, path) {
 	path = path || ROOT;
 	if(path.substring(path.length-1) != '/')  path += '/';
 	for(var i = 0; i < files.length; i++) {
-		if(typeof files[i] == 'string')
+		if(typeof files[i] == 'string') {
 			var S = new Script(path + files[i])
 			S.load(execute_next);
 			QUEUE.push(S);
+		} else if (typeof files[i] == 'function') {
+			QUEUE.push(files[i]);
+		}
 	}
 };
 
-var including = false;
+var executing = false;
 
 var execute_next = function() {
-	if(QUEUE[0] && QUEUE[0].isLoaded()) {
-		var script = QUEUE.shift();
-		script.execute(function() {
+	if(!executing && QUEUE[0]) {
+		
+		if(QUEUE[0] instanceof Script && QUEUE[0].isLoaded()) {
+			executing = true;
+			var script = QUEUE.shift();
+			script.execute(function() {
+				executing = false;
+				execute_next();
+			});
+		} else if (typeof QUEUE[0] =='function') {
+			var func = QUEUE.shift();
+			func();
+			executing = false;
 			execute_next();
-		});
+		}
 	}	
 }
 
@@ -255,18 +268,23 @@ init.tests = function() {
 		files[i] = files[i].replace(/\.js$/,'').replace('Test','') + 'Test';
 		TESTS.push(files[i]);
 	}
-	this.queue(files, init.app_dir);
+	this.queue(files, APP_DIR);
 	this.queue(init.testsuite);
 };
 
 
 init.testsuite = function() {
-	if(!init.including && !queue.length) {
+	if(!executing && !QUEUE.length) {
+		var casesCount = 0;
 		for(var T in TESTS) {
 			if(!TESTS.hasOwnProperty(T)) continue;
 			var testCase = typeof TESTS[T] == 'string' ? window[TESTS[T]] : TESTS[T];
-			testCase.run();
+			if(testCase instanceof window.TestCase) {
+				testCase.run();
+				casesCount++;
+			}
 		}
+		$(document.body).grab(new Element('div', { text: casesCount + ' Test Cases.' }));
 	} else {
 		setTimeout(arguments.callee, 1);
 	}
