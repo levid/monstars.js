@@ -27,6 +27,12 @@ var Controller = new Class({
 		return this.get_class().replace(/Controller/gi,'');
 	}.protect(),
 	
+	view: function(view_name, data) {
+		//var str = getView(view_name);
+		
+		return new View(view_name).render(data || this);
+	},
+	
 	toElement: function() {
 		return this.element;
 	}

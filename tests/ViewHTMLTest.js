@@ -22,7 +22,10 @@ var ViewHTMLTest = new TestCase({
 	
 	test_subview_with_object: function() {
 		var v1 = new this.ComplexView({contents: { 'title': 'Moo' } });
-		this.assertEquals($(v1).get('text'), '')
+		this.assertEquals($(v1).get('text'), 'Title: Moo');
+		
+		var v2 = new this.ComplexView({contents: { One: 'First Thing', Two: 'Second!' }});
+		this.assertEquals($(v2).get('text'), 'One: First Thing, Two: Second!');
 	},
 	
 	test_subview_with_models: function() {
@@ -39,6 +42,7 @@ var ViewHTMLTest = new TestCase({
 	onSetup: function() {
 		this.TestModel = new Class({
 			Extends:Model,
+			$class: 'TestModel',
 			data: {id: null, title: null }
 		});
 		this.SimpleView = new Class({
@@ -48,7 +52,7 @@ var ViewHTMLTest = new TestCase({
 		this.ComplexView = new Class({
 			Extends:View.HTML,
 			template: '<div class="test-view complex">{contents}</div>',
-			TestModel: SimpleView
+			TestModel: this.SimpleView
 		});
 	},
 	onTeardown: function() {

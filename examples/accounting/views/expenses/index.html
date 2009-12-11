@@ -1,0 +1,9 @@
+<ul id="ExpensesList">
+    <% expenses.each(function(e) { console.log(e); %>
+    <li class="expense expense<%=e.get('id')%>">
+        <span class="title"><%=e.get('title')%></span>
+        <p><%=e.get('description')%></p>
+        <a href="#" class="delete">Delete</a>
+    </li>
+    <% }); %>
+</ul>

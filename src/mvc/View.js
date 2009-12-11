@@ -1,40 +1,48 @@
 /*
-	View. - Representation of data from Models. Receives content at contruction
-	or can be updated. Render will apply the content to the template. Template
-	is supplied by the extending class.
+	View. - Representation of data from Models. Parses a template file, and renders.
 	
 	Dependencies: core/GetClass.js
 */
 var View = new Class({
     
-    Implements: [Events, GetClass],
+    Implements: [Events],
 	
 	template: null,
     
     content: {},
     
-    initialize: function(content) {
-        this.update(content);
+    initialize: function(view) {
+        this.template = init.view(view);
     },
     
-    update: function(newData) {
-    	newData instanceof Model ?
-			this.model(newData) :
-			this.content = newData;
-    },
-    
-    render: function() {
+    render: function(data) {
+		var str = this.template;
+		var fn = new Function('obj',
+			'var p=[],print=function(){p.push.apply(p,arguments);};' +
+			'with(obj){p.push(\'' +
+			str
+				.replace(/[\r\t\n]/g, " ")
+				.split("<%").join("\t")
+				.replace(/((^|%>)[^\t]*)'/g, "$1\r")
+				.replace(/\t=(.*?)%>/g, "',$1,'")
+				.split("\t").join("');")
+				.split("%>").join("p.push('")
+				.split("\r").join("\\'")
+			+ "');}return p.join('');");
+		
+		var html = data ? fn(data) : '';
 		this.fireEvent('render');
+		return html;
     },
 	
 	model: function(model) {
-		if(model) {
+		/*if(model) {
 			this.$model = model;
 			this.content = model.data;
 			return this;
 		} else {
 			return this.$model;
-		}
+		}*/
 	}
     
 });

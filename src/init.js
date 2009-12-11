@@ -1,295 +1,331 @@
-(function() {
+//MVC init.js. Copyright (c) 2008-2009 Sean McArthur <http://monstarlab.com/>, MIT Style License.
+var init = (function() {
 
-var init = this.init = function() {
-	//get *this* script tag
-	var self = get_self_script();
-	
-	//grab directory of this script tag
-	get_root(self);
-	
-	//setup DOMready function, since MooTools might get loaded too late
-	domready();
-	
-	//get app dir from GET
-	get_app(self);
+	var priv = {
 		
-	//include APP
-	init.queue('config.js', APP_DIR);
-};
-
-var HEAD = document.getElementsByTagName('head')[0];
-
-var get_self_script = function() {
-	var scripts = HEAD.getElementsByTagName('script');
-	var self_script;
-	for(var i = 0, len = scripts.length; i < len; i++) {
-		var src = scripts[i].src;
-		if(src.match(/init\.js/)) {
-			self_script = scripts[i];
-			break;
-		}
-	}
-	
-	return self_script;
-};
-
-var get_dir = function(script) {
-	return script.src.replace(/[a-zA-Z0-9\-_]+\.js(.*)$/,'')
-};
-
-var ROOT;
-var get_root = function(self_script) {
-	return ROOT = get_dir(self_script);
-};
-
-var APP_DIR;
-var get_app = function(self_script) {
-	try {
-		var path = self_script.src.match(/init\.js\?(.*)$/)[1];
-	} catch(e) {}
-	if(!path)
-		throw new Error('Must include app directory after init.js');
-	
-	var dots = path.match(/\.\.\//g);
-	if(dots && dots.length) {
-		var root = ROOT;
-		for(var i = 0; i < dots.length; i++) {
-			root = root.replace(/[a-zA-Z0-9\-_]+\/$/,'');
-		}
-		path = root + path.replace(/\.\.\//g,'').replace(/\/$/,'') + '/';
-	}
-	return APP_DIR = path;
-};
-
-var domready = function() {
-	var loaded = false;
-	var domready = function(){
-		loaded = true;
-		(function() {
-			try {
-				Browser.loaded = true;
-				window.fireEvent('domready');
-				document.fireEvent('domready');
-			} catch(e) {
-				setTimeout(arguments.callee, 0);
-			}
-		})();
-	};
-
-	// Mozilla, Opera and webkit nightlies currently support this event
-	if ( document.addEventListener ) {
-		// Use the handy event callback
-		document.addEventListener( "DOMContentLoaded", function(){
-			document.removeEventListener( "DOMContentLoaded", arguments.callee, false );
-			domready();
-		}, false );
-
-	// If IE event model is used
-	} else if ( document.attachEvent ) {
-		// ensure firing before onload,
-		// maybe late but safe also for iframes
-		document.attachEvent("onreadystatechange", function(){
-			if ( document.readyState === "complete" ) {
-				document.detachEvent( "onreadystatechange", arguments.callee );
-				domready();
-			}
-		});
-
-		// If IE and not an iframe
-		// continually check to see if the document is ready
-		if ( document.documentElement.doScroll && window == window.top ) (function(){
-			if ( loaded ) return;
-
-			try {
-				// If IE is used, use the trick by Diego Perini
-				// http://javascript.nwbox.com/IEContentLoaded/
-				document.documentElement.doScroll("left");
-			} catch( error ) {
-				setTimeout( arguments.callee, 0 );
-				return;
-			}
-
-			// and execute any waiting functions
-			domready();
-		})();
-	}
-};
-var SCRIPTS = [];
-function Script(file) {
-	var fileName = this.fileName = file.replace(/\.js$/,'') + '.js';
-	if(SCRIPTS[fileName])
-		return SCRIPTS[fileName];
-	else
-		return SCRIPTS[fileName] = this;
-};
-
-Script.prototype = {
-	
-	include: function(callback, type) {
-		var fileName = this.fileName;
-		var that = this;
-		var loaded = function() {
-			that._loaded = true;
-			callback()
-		}
+		HEAD: document.getElementsByTagName('head')[0],
 		
-		var script = document.createElement('script');
-		script.type = type || 'text/javascript';
-		script.src = fileName;
-		if(callback && typeof callback == 'function') {
-			script.onload = loaded;
-			script.onreadystatechange = function() {
-				if(this.readyState == 'complete') {
-					loaded();
+		ROOT: null,
+		
+		APP_DIR: null,
+		
+		QUEUE: [],
+		
+		start: function() {
+			var self = this.get_init_script();
+			this.ROOT = self.dir();
+			
+			this.domready();
+
+			pub.queue('config.js',this.get_app_dir(self));
+		},
+		
+		get_init_script: function() {
+			var scripts = this.HEAD.getElementsByTagName('script');
+			var self_script;
+			for(var i = 0, len = scripts.length; i < len; i++) {
+				var src = scripts[i].src;
+				if(src.match(/init\.js/)) {
+					self_script = scripts[i];
+					break;
 				}
 			}
-		}
-		if(this.script) {
-			HEAD.replaceChild(script, this.script);
-		} else {
-			HEAD.appendChild(script);
-		}
-		SCRIPTS[fileName] = this;
-		return this.script = script;
-	},
-	
-	load: function(callback) {
-		return this.include(callback, 'text/html');
-	},
-	
-	execute: function(callback) {
-		return this.include(callback);
-	},
-	
-	isLoaded: function() {
-		return this._loaded;
-	}
-	
-	
-};
-
-var QUEUE = [];
-init.queue = function(files, path) {
-	if(!(files instanceof Array)) files = [files];
-	path = path || ROOT;
-	if(path.substring(path.length-1) != '/')  path += '/';
-	for(var i = 0; i < files.length; i++) {
-		if(typeof files[i] == 'string') {
-			var S = new Script(path + files[i])
-			S.load(execute_next);
-			QUEUE.push(S);
-		} else if (typeof files[i] == 'function') {
-			QUEUE.push(files[i]);
-		}
-	}
-};
-
-var executing = false;
-
-var execute_next = function() {
-	if(!executing && QUEUE[0]) {
+			var SELF = new Script(self_script)
+			SELF._loaded = true;
+			return SELF;
+		},
 		
-		if(QUEUE[0] instanceof Script && QUEUE[0].isLoaded()) {
-			executing = true;
-			var script = QUEUE.shift();
-			script.execute(function() {
-				executing = false;
-				execute_next();
-			});
-		} else if (typeof QUEUE[0] =='function') {
-			var func = QUEUE.shift();
-			func();
-			executing = false;
-			execute_next();
-		}
-	}	
-}
-
-init.core = function(path) {
+		get_app_dir: function(init_script) {
+			var path = init_script.query();
+			if(!path)
+				throw new Error('Must include app directory after init.js');
+			
+			var dots = path.match(/\.\.\//g);
+			if(dots && dots.length) {
+				var root = this.ROOT;
+				for(var i = 0; i < dots.length; i++) {
+					root = root.replace(/[a-zA-Z0-9\-_]+\/$/,'');
+				}
+				path = root + path.replace(/\.\.\//g,'').replace(/\/$/,'') + '/';
+			}
+			return this.APP_DIR = path;
+		},
+		
+		domready: function() {
+			var loaded = false;
+			var domready = function(){
+				loaded = true;
+				(function() {
+					try {
+						Browser.loaded = true;
+						window.fireEvent('domready');
+						document.fireEvent('domready');
+					} catch(e) {
+						setTimeout(arguments.callee, 0);
+					}
+				})();
+			};
+		
+			// Mozilla, Opera and webkit nightlies currently support this event
+			if ( document.addEventListener ) {
+				// Use the handy event callback
+				document.addEventListener( "DOMContentLoaded", function(){
+					document.removeEventListener( "DOMContentLoaded", arguments.callee, false );
+					domready();
+				}, false );
+		
+			// If IE event model is used
+			} else if ( document.attachEvent ) {
+				// ensure firing before onload,
+				// maybe late but safe also for iframes
+				document.attachEvent("onreadystatechange", function(){
+					if ( document.readyState === "complete" ) {
+						document.detachEvent( "onreadystatechange", arguments.callee );
+						domready();
+					}
+				});
+		
+				// If IE and not an iframe
+				// continually check to see if the document is ready
+				if ( document.documentElement.doScroll && window == window.top ) (function(){
+					if ( loaded ) return;
+		
+					try {
+						// If IE is used, use the trick by Diego Perini
+						// http://javascript.nwbox.com/IEContentLoaded/
+						document.documentElement.doScroll("left");
+					} catch( error ) {
+						setTimeout( arguments.callee, 0 );
+						return;
+					}
+		
+					// and execute any waiting functions
+					domready();
+				})();
+			}
+		},
+		
+		request: function(path) {
+			var request = window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+			request.open('GET', path, false);
+			try {
+				request.send();
+			} catch(e) { return null; }
+			if ( request.status == 500 || request.status == 404 || request.status == 2 ||(request.status == 0 && request.responseText == '') ) return null;
+			return request.responseText;
+		},
+		
+		EXECUTING: false,
+		
+		execute_next: function() {
+			if(!priv.EXECUTING && priv.QUEUE[0]) {
+				if(priv.QUEUE[0] instanceof Script && priv.QUEUE[0].isLoaded()) {
+					priv.EXECUTING = true;
+					var script = priv.QUEUE.shift();
+					script.execute(function() {
+						priv.EXECUTING = false;
+						priv.execute_next();
+					});
+				} else if (typeof priv.QUEUE[0] =='function') {
+					var func = priv.QUEUE.shift();
+					func();
+					priv.execute_next();
+				}
+			}
+		},
+		
+		SCRIPTS: [],
+		
+		VIEWS: [],
+		
+		TESTS: []
+		
+	};
 	
-	var core_files = ['Core','mootools-1.2.4-core','mootools-1.2.4.1-more'];
-	this.queue(core_files, ROOT + 'core');
-};
+	function Script(file) {
+		if(typeof file == 'string') {
+			this.fileName = file;
+		} else if (file && file.nodeName && file.nodeName == 'SCRIPT') {
+			this.script = file;
+			this.fileName = this.script.src;
+			this._loaded = true;
+		}
+		
+		if(priv.SCRIPTS[this.fileName])
+			return priv.SCRIPTS[this.fileName];
+		else
+			return priv.SCRIPTS[this.fileName] = this;
+	};
+	
+	Script.prototype = {
+		
+		include: function(callback, type) {
+			var fileName = this.fileName;
+			var that = this;
+			var loaded = function() {
+				that._loaded = true;
+				callback.call(that);
+			}
+			
+			var script = document.createElement('script');
+			script.type = type || 'text/javascript';
+			script.src = fileName;
+			if(callback && typeof callback == 'function') {
+				script.onload = loaded;
+				script.onreadystatechange = function() {
+					if(this.readyState == 'complete' || this.readyState == 'loaded') {
+						loaded();
+					}
+				}
+			}
+			if(this.script) {
+				priv.HEAD.replaceChild(script, this.script);
+			} else {
+				priv.HEAD.appendChild(script);
+			}
+			priv.SCRIPTS[fileName] = this;
+			return this.script = script;
+		},
+		
+		load: function(callback) {
+			return this.include(callback, 'text/html');
+		},
+		
+		execute: function(callback) {
+			return this.include(callback);
+		},
+		
+		isLoaded: function() {
+			return this._loaded;
+		},
+		
+		dir: function() {
+			return this.fileName.replace(/[a-zA-Z0-9\-_]+\.js(.*)$/,'');
+		},
+		
+		query: function() {
+			var q;
+			try {
+				q = this.fileName.match(/\?(.*)$/)[1];
+			} catch(e) {}
+			return q;			
+		}
+		
+	};
 
-init.mvc = function() {
-	//maybe load Dispatcher last?
-	var standard_files = ['GetClass','Element.Serialize','Model','Controller','View'];//,'Dispatcher'];
-	var files;
-	if(arguments) {
-		var extra_files = Array.prototype.slice.apply(arguments);
-		files = standard_files.concat(extra_files);
-	} else {
-		files = standard_files;
-	}
-	this.queue(files, ROOT + 'mvc');
-};
-
-init.app = function(app_funcs) {
-	if(typeof app_funcs == 'function') {
-		app_funcs();
-	}
-	init.queue('Dispatcher', ROOT + 'mvc');
-};
-
-init.models = function() {
-	if(arguments) {
-		var files = Array.prototype.slice.apply(arguments);
-	}
-	this.queue(files, APP_DIR + 'models');
-};
-
-init.controllers = function() {
-	if(arguments) {
-		var files = Array.prototype.slice.apply(arguments);
-	}
-	for(var i = 0; i < files.length; i++) {
-		files[i] = files[i].replace(/\.js$/,'').replace('Controller','') + 'Controller';
-	}
-	this.queue(files, APP_DIR + 'controllers');
-};
-
-init.views = function() {
-	if(arguments) {
-		var files = Array.prototype.slice.apply(arguments);
-	}
-	for(var i = 0; i < files.length; i++) {
-		files[i] = files[i].replace(/\.js$/,'').replace('View','') + 'View';
-	}
-	this.queue(files, APP_DIR + 'views');
-};
-
-var TESTS = [];
-
-init.tests = function() {
-	if(arguments) {
-		var files = Array.prototype.slice.apply(arguments);
-	}
-	for(var i = 0; i < files.length; i++) {
-		files[i] = files[i].replace(/\.js$/,'').replace('Test','') + 'Test';
-		TESTS.push(files[i]);
-	}
-	this.queue(files, APP_DIR);
-	this.queue(init.testsuite);
-};
-
-
-init.testsuite = function() {
-	if(!executing && !QUEUE.length) {
-		var casesCount = 0;
-		for(var T in TESTS) {
-			if(!TESTS.hasOwnProperty(T)) continue;
-			var testCase = typeof TESTS[T] == 'string' ? window[TESTS[T]] : TESTS[T];
-			if(testCase instanceof window.TestCase) {
-				testCase.run();
-				casesCount++;
+	var pub = {
+		queue: function(files, path) {
+			if(!(files instanceof Array)) files = [files];
+			path = path || priv.ROOT;
+			if(path.substring(path.length-1) != '/')  path += '/';
+			for(var i = 0; i < files.length; i++) {
+				if(typeof files[i] == 'string') {
+					var S = new Script(path + files[i].replace(/\.js$/,'') + '.js')
+					S.load(priv.execute_next);
+					priv.QUEUE.push(S);
+				} else if (typeof files[i] == 'function') {
+					priv.QUEUE.push(files[i]);
+				}
+			}
+		},
+		core: function() {
+			var core_files = ['Core','mootools-1.2.4-core','mootools-1.2.4.1-more'];
+			this.queue(core_files, priv.ROOT + 'core');
+		},
+		mvc: function() {
+			var standard_files = ['GetClass','Element.Serialize','Model','Controller','View'];
+			var files;
+			if(arguments) {
+				var extra_files = Array.prototype.slice.apply(arguments);
+				files = standard_files.concat(extra_files);
+			} else {
+				files = standard_files;
+			}
+			this.queue(files, priv.ROOT + 'mvc');
+		},
+		app: function(app_funcs) {
+			if(typeof app_funcs == 'function') {
+				app_funcs();
+			}
+			this.queue('Dispatcher', priv.ROOT + 'mvc');
+		},
+		models: function() {
+			if(arguments) {
+				var files = Array.prototype.slice.apply(arguments);
+			
+				this.queue(files, priv.APP_DIR + 'models');
+			}
+		},
+		controllers: function() {
+			if(arguments) {
+				var files = Array.prototype.slice.apply(arguments);
+			
+				for(var i = 0; i < files.length; i++) {
+					files[i] = files[i].replace(/\.js$/,'').replace('Controller','') + 'Controller';
+				}
+				this.queue(files, priv.APP_DIR + 'controllers');
+			}
+		},
+		view: function(view_name) {
+			var fileName = priv.APP_DIR + 'views/' + view_name.replace(/\.html$/,'') + '.html';
+			if(priv.VIEWS[fileName]) {
+				return priv.VIEWS[fileName]();
+			}
+			return null;
+		},
+		views: function() {
+			if(arguments) {
+				var files = Array.prototype.slice.apply(arguments);
+			
+				for(var i = 0; i < files.length; i++) {
+					
+					var fileName = priv.APP_DIR + 'views/' + files[i].replace(/\.html$/,'') + '.html';
+					if(!priv.VIEWS[fileName]) {
+						var vScript = new Script(fileName);
+						if(!vScript.isLoaded()) {
+							vScript.load(function() {
+								var file = this.fileName;
+								priv.VIEWS[file] = function() { return priv.request(file); };
+							});
+						}
+					}
+				}
+				//this.queue(files, priv.APP_DIR + 'views');
+			}
+		},
+		tests: function() {
+			if(arguments) {
+				var files = Array.prototype.slice.apply(arguments);
+			
+				for(var i = 0; i < files.length; i++) {
+					files[i] = files[i].replace(/\.js$/,'').replace('Test','') + 'Test';
+					priv.TESTS.push(files[i]);
+				}
+				this.queue(files, priv.APP_DIR);
+				this.queue(this.testsuite);
+			}
+		},
+		testsuite: function() {
+			if(!priv.EXECUTING && !priv.QUEUE.length) {
+				var casesCount = 0;
+				var TESTS = priv.TESTS;
+				for(var T in TESTS) {
+					if(!TESTS.hasOwnProperty(T)) continue;
+					var testCase = typeof TESTS[T] == 'string' ? window[TESTS[T]] : TESTS[T];
+					if(testCase instanceof window.TestCase) {
+						testCase.run();
+						casesCount++;
+					}
+				}
+				$(document.body).grab(new Element('div', { text: casesCount + ' Test Cases.' }));
+			} else {
+				setTimeout(arguments.callee, 1);
 			}
 		}
-		$(document.body).grab(new Element('div', { text: casesCount + ' Test Cases.' }));
-	} else {
-		setTimeout(arguments.callee, 1);
-	}
-};
+	};
 
-init();
 
-})()
+	priv.start();
+	return pub;
+
+})();
