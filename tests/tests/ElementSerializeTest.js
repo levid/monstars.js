@@ -10,12 +10,12 @@ var ElementSerializeTest = new TestCase({
 	test_checkbox: function() {
 		var form = new Element('form', { html: '\
 			<fieldset>\
-				<input type="checkbox" name="topic" checked="checked" value="Javascript" />\
-				<input type="checkbox" name="topic" value="PHP" />\
+				<input type="checkbox" name="topic[]" checked="checked" value="Javascript" />\
+				<input type="checkbox" name="topic[]" value="PHP" />\
 			</fieldset>\
 			<fieldset>\
-				<input type="checkbox" name="candy" checked="checked"  value="Twix" />\
-				<input type="checkbox" name="candy" checked="checked"  value="Snickers" />\
+				<input type="checkbox" name="candy[]" checked="checked"  value="Twix" />\
+				<input type="checkbox" name="candy[]" checked="checked"  value="Snickers" />\
 			</fieldset>\
 			<fieldset>\
 				<input type="checkbox" name="sleepy" value="true" checked="checked" />\

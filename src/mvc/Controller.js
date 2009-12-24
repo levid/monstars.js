@@ -28,8 +28,6 @@ var Controller = new Class({
 	}.protect(),
 	
 	view: function(view_name, data) {
-		//var str = getView(view_name);
-		
 		return new View(view_name).render(data || this);
 	},
 	

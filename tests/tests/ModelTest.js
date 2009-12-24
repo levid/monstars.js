@@ -1,4 +1,12 @@
 var ModelTest = new TestCase({
+	test_initialize: function() {
+		var m = new this.TestModel({id: 44123, title:'Init Test', fake: "Won't Exist"});
+		
+		this.assertTrue(m instanceof Model);
+		this.assertEquals(m.get('id'), 44123);
+		this.assertEquals(m.get('title'), 'Init Test');
+		this.assertFalse(m.get('fake'));
+	},
 	test_set: function() {
 		var m = new this.TestModel();
 		this.assertFalse(m.get('title'));
@@ -9,18 +17,14 @@ var ModelTest = new TestCase({
 		m.set({title: 'DifferentTitle'});
 		this.assertEquals(m.get('title'), 'DifferentTitle');
 	},
-	test_initialize: function() {
-		var TestModel = new Class({
+	test_fields: function() {
+		var FieldModel = new Class({
 			Extends: Model,
-			data: { id:null, title:null }
+			fields: {
+				id: Model.Fields.AutoField(),
+				title: Model.Fields.TextField()
+			}
 		});
-		
-		var m = new this.TestModel({id: 44123, title:'Init Test', fake: "Won't Exist"});
-		
-		this.assertTrue(m instanceof Model);
-		this.assertEquals(m.get('id'), 44123);
-		this.assertEquals(m.get('title'), 'Init Test');
-		this.assertFalse(m.get('fake'));
 	}
 }, {
 	onSetup: function() {

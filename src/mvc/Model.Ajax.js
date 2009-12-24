@@ -58,7 +58,10 @@ Model.Ajax = new Class({
     }.protect(),
     
     url: function(action) {
-        var STATIC = window[this.get_class()].$urls || {};
+        if(this.useFixture) {
+			return '/tests/fixtures/'+this.get_class()+'.js';
+		}
+		var STATIC = window[this.get_class()].$urls || {};
         var root = STATIC.root || '/';
         var controller_name = STATIC.controller_name || this.get_class().toLowerCase() + 's';
         var method = (STATIC[action] && STATIC[action].substitute(this.data)) || action;
@@ -74,21 +77,32 @@ Model.Ajax.get = function(type, options, callback) {
 };
 
 Model.Ajax.find = function(conditions, options, callback) {
-    var STATIC = window[GetClass.get(this)].$urls || {},
-        root = STATIC.root || '/',
-        controller_name = STATIC.controller_name || GetClass.get(this).toLowerCase() + 's',
-        method = (STATIC['find'] && STATIC['find'].substitute(this.data)) || 'find',
-        uri = root + controller_name + '/' + method,
-        
-        request = new Request.JSON({
-			url: uri,
-			method: 'get',
-			onSuccess: function(response) {
-				throw new Error('should instantiate the response before giving to callback');
-				if($type(callback) == 'function')
-					callback(that)
+	if(this.prototype.useFixture) {
+		var uri = '/tests/fixtures/'+GetClass.get(this).toLowerCase()+'.js';
+	} else {
+		var STATIC = window[GetClass.get(this)].$urls || {},
+			root = STATIC.root || '/',
+			controller_name = STATIC.controller_name || GetClass.get(this).toLowerCase() + 's',
+			method = (STATIC['find'] && STATIC['find'].substitute(this.data)) || 'find',
+			uri = root + controller_name + '/' + method;
+	}
+	var request = new Request.JSON({
+		url: uri,
+		method: 'get',
+		onSuccess: function(response) {
+			if($type(callback) == 'function') {
+				var models = [];
+				$splat(response).each(function(m) {
+					models.push(new this(m));
+				});
+				callback(models);
 			}
-		}).send(Hash.toQueryString(conditions));
+		},
+		onError: function(e) {
+			console.error(e);
+			throw e;
+		}
+	}).send(Hash.toQueryString(conditions));
 };
 
 Model.Ajax.findAll = function(callback) {

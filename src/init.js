@@ -229,11 +229,11 @@ var init = (function() {
 			}
 		},
 		core: function() {
-			var core_files = ['Core','mootools-1.2.4-core','mootools-1.2.4.1-more'];
+			var core_files = ['mootools-1.2.4-core','mootools-1.2.4.1-more','Core'];
 			this.queue(core_files, priv.ROOT + 'core');
 		},
 		mvc: function() {
-			var standard_files = ['GetClass','Element.Serialize','Model','Controller','View'];
+			var standard_files = ['GetClass','Element.Serialize','Model','Model.Fields','Controller','View'];
 			var files;
 			if(arguments) {
 				var extra_files = Array.prototype.slice.apply(arguments);
@@ -266,13 +266,17 @@ var init = (function() {
 				this.queue(files, priv.APP_DIR + 'controllers');
 			}
 		},
+		
+		//checks cache (priv.VIEWS), otherwise, XHR gets contents.
 		view: function(view_name) {
 			var fileName = priv.APP_DIR + 'views/' + view_name.replace(/\.html$/,'') + '.html';
-			if(priv.VIEWS[fileName]) {
-				return priv.VIEWS[fileName]();
+			if(!priv.VIEWS[fileName]) {
+				priv.VIEWS[fileName] = priv.request(fileName);
 			}
-			return null;
+			return priv.VIEWS[fileName];
 		},
+		
+		//this lets us preload views if we want to
 		views: function() {
 			if(arguments) {
 				var files = Array.prototype.slice.apply(arguments);
@@ -285,7 +289,8 @@ var init = (function() {
 						if(!vScript.isLoaded()) {
 							vScript.load(function() {
 								var file = this.fileName;
-								priv.VIEWS[file] = function() { return priv.request(file); };
+								this.script.parentNode.removeChild(this.script);
+								
 							});
 						}
 					}
@@ -294,6 +299,8 @@ var init = (function() {
 			}
 		},
 		tests: function() {
+			this.queue('TestSuite', priv.ROOT + 'mvc');
+			
 			if(arguments) {
 				var files = Array.prototype.slice.apply(arguments);
 			
@@ -301,26 +308,16 @@ var init = (function() {
 					files[i] = files[i].replace(/\.js$/,'').replace('Test','') + 'Test';
 					priv.TESTS.push(files[i]);
 				}
-				this.queue(files, priv.APP_DIR);
+				this.queue(files, priv.APP_DIR + 'tests');
 				this.queue(this.testsuite);
 			}
-		},
-		testsuite: function() {
-			if(!priv.EXECUTING && !priv.QUEUE.length) {
-				var casesCount = 0;
-				var TESTS = priv.TESTS;
-				for(var T in TESTS) {
-					if(!TESTS.hasOwnProperty(T)) continue;
-					var testCase = typeof TESTS[T] == 'string' ? window[TESTS[T]] : TESTS[T];
-					if(testCase instanceof window.TestCase) {
-						testCase.run();
-						casesCount++;
-					}
+			this.queue(function() {
+				if(!priv.EXECUTING && !priv.QUEUE.length) {
+					window.TestSuite(priv.TESTS);
+				} else {
+				   setTimeout(arguments.callee, 1);
 				}
-				$(document.body).grab(new Element('div', { text: casesCount + ' Test Cases.' }));
-			} else {
-				setTimeout(arguments.callee, 1);
-			}
+			});
 		}
 	};
 

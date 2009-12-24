@@ -1,7 +1,5 @@
 /*
 	View. - Representation of data from Models. Parses a template file, and renders.
-	
-	Dependencies: core/GetClass.js
 */
 var View = new Class({
     

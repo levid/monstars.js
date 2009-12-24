@@ -2,28 +2,16 @@ var Expense = new Class({
 	
 	Extends: Model.Ajax,
 	
-	data: {
-		id: null,
-		title: null,
-		description: null,
-		price: null
+	fields: {
+		id: Model.Fields.AutoField(),
+		title: Model.Fields.TextField(),
+		description: Model.Fields.TextField(),
+		price: Model.Fields.NumberField()
 	}
 	
 });
 
-Expense.$urls = {
-	'controller_name':'expenses',
-	'update': 'save',
-	'insert': 'new',
-	'find': 'all',
-	'delete': 'kill'
-};
-
-//TODO: find way to automagically do this?
-Expense.get = Model.Ajax.get;
-Expense.find = Model.Ajax.find;
-
-
+//todo - Make this use fixtures.
 Expense.findAll = function(callback) {
     console.log('hijacked Expense.findAll');
 	var list = [];
@@ -34,4 +22,3 @@ Expense.findAll = function(callback) {
 		callback(list);
 	}
 };
-//Expense.findAll = Model.Ajax.findAll;

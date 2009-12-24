@@ -1,33 +1,33 @@
 /*
-	Model. - Models
+	Model. - Model, and Model.Fields
 	Dependencies: monstar/GetClass.js
 */
 var Model = new Class({
     
     Implements: [GetClass],
     
-    data: {},
+    $data: {}, //private object to hold data
+	
+	fields: {}, //declares the types and other options of what can be in $data
     
     initialize: function(data) {
         this.set(data);        
     },
 
     set: function(prop, value) {
-    	 
 		if(prop && ($type(prop) == 'object' || $type(prop) == 'hash')) {
-			for(var key in this.data) {
-              
+			for(var key in this.fields) {
 				if(prop.hasOwnProperty(key) && prop[key]) {
-                    this.data[key] = $unlink(prop[key]);
+                    this.$data[key] = this.fields[key].screen($unlink(prop[key]));
                 }
             }
 		} else {
-			this.data[prop] = value;
+			this.$data[prop] = this.fields[key].screen(value);
 		}	
     },
     
     get: function(prop) {
-    	return this.data[prop];
+    	return this.$data[prop];
     },
     
     save: function() {
