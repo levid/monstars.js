@@ -280,14 +280,13 @@ var init = (function() {
 		views: function() {
 			if(arguments) {
 				var files = Array.prototype.slice.apply(arguments);
-			
 				for(var i = 0; i < files.length; i++) {
 					
 					var fileName = priv.APP_DIR + 'views/' + files[i].replace(/\.html$/,'') + '.html';
 					if(!priv.VIEWS[fileName]) {
-						var vScript = new Script(fileName);
-						if(!vScript.isLoaded()) {
-							vScript.load(function() {
+						var viewScript = new Script(fileName);
+						if(!viewScript.isLoaded()) {
+							viiewScript.load(function() {
 								var file = this.fileName;
 								this.script.parentNode.removeChild(this.script);
 								
@@ -295,13 +294,11 @@ var init = (function() {
 						}
 					}
 				}
-				//this.queue(files, priv.APP_DIR + 'views');
 			}
 		},
 		tests: function() {
-			this.queue('TestSuite', priv.ROOT + 'mvc');
-			
 			if(arguments) {
+				this.queue('TestSuite', priv.ROOT + 'mvc');
 				var files = Array.prototype.slice.apply(arguments);
 			
 				for(var i = 0; i < files.length; i++) {
@@ -310,14 +307,14 @@ var init = (function() {
 				}
 				this.queue(files, priv.APP_DIR + 'tests');
 				this.queue(this.testsuite);
+				this.queue(function() {
+					if(!priv.EXECUTING && !priv.QUEUE.length) {
+						window.TestSuite(priv.TESTS);
+					} else {
+					   setTimeout(arguments.callee, 1);
+					}
+				});
 			}
-			this.queue(function() {
-				if(!priv.EXECUTING && !priv.QUEUE.length) {
-					window.TestSuite(priv.TESTS);
-				} else {
-				   setTimeout(arguments.callee, 1);
-				}
-			});
 		}
 	};
 
