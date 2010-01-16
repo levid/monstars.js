@@ -1,21 +1,21 @@
 var ModelTest = new TestCase({
 	test_initialize: function() {
-		var m = new this.TestModel({id: 44123, title:'Init Test', fake: "Won't Exist"});
+		var m = new TestModel({id: 44123, title:'Init Test', fake: "Won't Exist"});
 		
 		this.assertTrue(m instanceof Model);
-		this.assertEquals(m.get('id'), 44123);
-		this.assertEquals(m.get('title'), 'Init Test');
+		this.assertEqual(m.get('id'), 44123);
+		this.assertEqual(m.get('title'), 'Init Test');
 		this.assertFalse(m.get('fake'));
 	},
 	test_set: function() {
-		var m = new this.TestModel();
+		var m = new TestModel();
 		this.assertFalse(m.get('title'));
 		
 		m.set('title', 'TestTitle');
-		this.assertEquals(m.get('title'), 'TestTitle');
+		this.assertEqual(m.get('title'), 'TestTitle');
 		
 		m.set({title: 'DifferentTitle'});
-		this.assertEquals(m.get('title'), 'DifferentTitle');
+		this.assertEqual(m.get('title'), 'DifferentTitle');
 	},
 	test_fields: function() {
 		var FieldModel = new Class({
@@ -25,15 +25,31 @@ var ModelTest = new TestCase({
 				title: Model.Fields.TextField()
 			}
 		});
+	},
+	test_identity: function() {
+		var m = new TestModel({ id:13 });
+		var el = new Element('div');
+		el.addClass(m.identity());
+		this.assertTrue(el.hasClass('TestModel_13'));
+	},
+	test_Element_model: function() {
+		var m = new TestModel({ id:13 });
+		var el = new Element('div');
+		el.addClass(m.identity());
+		//this.assertTrue(m instanceof el.model());
+		this.assertEqual(el.model(), m);
 	}
 }, {
 	onSetup: function() {
-		this.TestModel = new Class({
+		window.TestModel = new Class({
 			Extends: Model,
-			data: { id:null, title:null }
+			fields: {
+				id: Model.Fields.AutoField(),
+				title: Model.Fields.TextField()
+			}
 		});
 	},
 	onTeardown: function() {
-		delete this.TestModel;
+		delete window.TestModel;
 	}
 });

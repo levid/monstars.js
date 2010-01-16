@@ -3,8 +3,8 @@ var ElementSerializeTest = new TestCase({
 		var form = new Element('form', { html: '<fieldset><input type="text" name="first_name" value="Sean" /><input type="text" name="last_name" value="McArthur" /><input type="text" name="title" /></fieldset>' });
 		
 		var data = form.serialize();
-		this.assertEquals(data.first_name, 'Sean');
-		this.assertEquals(data.last_name, 'McArthur');
+		this.assertEqual(data.first_name, 'Sean');
+		this.assertEqual(data.last_name, 'McArthur');
 		this.assertFalse(data.title);
 	},
 	test_checkbox: function() {
@@ -24,15 +24,15 @@ var ElementSerializeTest = new TestCase({
 		
 		var data = form.serialize();
 		
-		this.assertEquals(data.topic, 'Javascript');
+		this.assertEqual(data.topic, 'Javascript');
 		this.assertTrue(data.sleepy);
-		this.assertEquals(data.candy, ['Twix', 'Snickers']);
+		this.assertEqual(data.candy, ['Twix', 'Snickers']);
 	},
 	test_textArea: function() {
 		var form = new Element('form', { html: '<fieldset><textarea name="t">La dee da.</textarea></fieldset>' });
 		
 		var data = form.serialize();
-		this.assertEquals(data.t, 'La dee da.');
+		this.assertEqual(data.t, 'La dee da.');
 		this.assertFalse(data.nonExistant);
 	},
 	test_select: function() {
@@ -51,8 +51,8 @@ var ElementSerializeTest = new TestCase({
 		
 		var data = form.serialize();
 		
-		this.assertEquals(data.job, 'Programmer');
-		this.assertEquals(data.food, 'tbell');
+		this.assertEqual(data.job, 'Programmer');
+		this.assertEqual(data.food, 'tbell');
 		this.assertFalse(data.carls);
 	},
 	test_radio: function() {
@@ -69,7 +69,7 @@ var ElementSerializeTest = new TestCase({
 		
 		var data = form.serialize();
 		
-		this.assertEquals(data.job, 'Programmer');
+		this.assertEqual(data.job, 'Programmer');
 		this.assertFalse(data.food);
 		this.assertFalse(data.carls);
 	}

@@ -14,7 +14,7 @@ var ViewTest = new TestCase({
 		
 		var el = new Element('div', { html: html }).getFirst();
 		this.assertTrue(el.hasClass('simple'));
-		this.assertEquals(el.get('text').trim(), echo_test);
+		this.assertEqual(el.get('text').trim(), echo_test);
 	},
 	test_subview: function() {
 		

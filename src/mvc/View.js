@@ -28,7 +28,7 @@ var View = new Class({
 				.split("\r").join("\\'")
 			+ "');}return p.join('');");
 		
-		var html = data ? fn(data) : '';
+		var html = data ? fn($merge(data, View.Helpers)) : '';
 		this.fireEvent('render');
 		return html;
     },
@@ -44,3 +44,11 @@ var View = new Class({
 	}
     
 });
+
+View.Helpers = {
+	
+	view: function(view_name, data) {
+		return new View(view_name).render(data || this);
+	}
+	
+};

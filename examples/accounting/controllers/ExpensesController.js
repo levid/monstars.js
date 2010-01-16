@@ -10,6 +10,10 @@ var ExpensesController = new Class({
 		
 		load: function() {
 			Expense.findAll(this.listExpenses.bind(this));
+		},
+		
+		'click:relay(.expense .delete)': function(e) {
+			alert($(e.target).model());//.destroy().model().destroy();
 		}
 		
 	}

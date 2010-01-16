@@ -6,8 +6,6 @@ Model.Ajax = new Class({
    
     Extends: Model,
     
-    $class: 'Model.Ajax',
-    
     save: function(callback) {
         this.data.id ?
             this._update(callback) :
@@ -59,7 +57,7 @@ Model.Ajax = new Class({
     
     url: function(action) {
         if(this.useFixture) {
-			return '/tests/fixtures/'+this.get_class()+'.js';
+			return init.app_dir() + 'tests/fixtures/'+this.get_class()+'.js';
 		}
 		var STATIC = window[this.get_class()].$urls || {};
         var root = STATIC.root || '/';
@@ -77,8 +75,8 @@ Model.Ajax.get = function(type, options, callback) {
 };
 
 Model.Ajax.find = function(conditions, options, callback) {
-	if(this.prototype.useFixture) {
-		var uri = '/tests/fixtures/'+GetClass.get(this).toLowerCase()+'.js';
+	if(this.prototype.useFixtures) {
+		var uri = init.app_dir() + 'tests/fixtures/'+GetClass.get(this).toLowerCase()+'.json';
 	} else {
 		var STATIC = window[GetClass.get(this)].$urls || {},
 			root = STATIC.root || '/',
@@ -98,7 +96,7 @@ Model.Ajax.find = function(conditions, options, callback) {
 				callback(models);
 			}
 		},
-		onError: function(e) {
+		onFailure: function(e) {
 			console.error(e);
 			throw e;
 		}

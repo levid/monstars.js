@@ -7,11 +7,13 @@ var Expense = new Class({
 		title: Model.Fields.TextField(),
 		description: Model.Fields.TextField(),
 		price: Model.Fields.NumberField()
-	}
+	},
+	
+	useFixtures: true
 	
 });
 
-//todo - Make this use fixtures.
+/*//todo - Make this use fixtures.
 Expense.findAll = function(callback) {
     console.log('hijacked Expense.findAll');
 	var list = [];
@@ -21,4 +23,4 @@ Expense.findAll = function(callback) {
 	if($type(callback) == 'function') {
 		callback(list);
 	}
-};
+};*/

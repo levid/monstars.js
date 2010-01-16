@@ -13,7 +13,8 @@ Model.Fields = {
 		},
 		
 		initialize: function(type, options) {
-			options && (options.type = type || options.type);
+			options = options || {};
+			options.type = type || options.type;
 			this.setOptions(options);
 		},
 		

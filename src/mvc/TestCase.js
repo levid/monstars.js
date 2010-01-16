@@ -89,8 +89,13 @@ var TestCase = new Class({
 		this.testBox.grab(res);
 	}.protect(),
 	
-	assertEquals: function(val1, val2) {
-		if(val1 !== val2) throw new Error(val1+' does not equal '+val2);
+	assertEqual: function(val1, val2) {
+		if(val1 != val2) throw new Error("Actual: " +val1+' , Expected: '+val2);
+		this._asserts++;
+	}.protect(),
+	
+	assertIdentity: function(val1, val2) {
+		if(val1 !== val2) throw new Error("Actual: " +val1+' , Expected: '+val2);
 		this._asserts++;
 	}.protect(),
 	

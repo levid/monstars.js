@@ -1,4 +1,4 @@
-//MVC init.js. Copyright (c) 2008-2009 Sean McArthur <http://monstarlab.com/>, MIT Style License.
+//MVC init.js. Copyright (c) 2009-2010 Sean McArthur <http://monstarlab.com/>, MIT Style License.
 var init = (function() {
 
 	var priv = {
@@ -214,6 +214,11 @@ var init = (function() {
 	};
 
 	var pub = {
+		
+		app_dir: function() {
+			return priv.APP_DIR;
+		},
+		
 		queue: function(files, path) {
 			if(!(files instanceof Array)) files = [files];
 			path = path || priv.ROOT;
@@ -286,7 +291,7 @@ var init = (function() {
 					if(!priv.VIEWS[fileName]) {
 						var viewScript = new Script(fileName);
 						if(!viewScript.isLoaded()) {
-							viiewScript.load(function() {
+							viewScript.load(function() {
 								var file = this.fileName;
 								this.script.parentNode.removeChild(this.script);
 								
