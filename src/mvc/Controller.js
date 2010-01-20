@@ -28,8 +28,14 @@ var Controller = new Class({
 	}.protect(),
 	
 	view: function(view_name, data) {
-		return new View(view_name).render(data || this);
-	},
+		try {
+			view_name = view_name || this._controller_prefix().toLowerCase() + '/' + arguments.callee.caller.caller.caller._name;
+		} catch(e) {
+			throw new Error('View name was not specified, and could not determine from controller action.');
+		}
+		
+		return View.Helpers.view(view_name, data || this);
+	}.protect(),
 	
 	toElement: function() {
 		return this.element;

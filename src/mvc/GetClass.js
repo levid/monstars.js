@@ -3,10 +3,8 @@
 	function. Returns classname of the instance. Uses Hash.findKey
 */
 // [object Object].get_class() == 'Model.Ajax'
-
-
-Hash.implement({
-    findKey: function(key) {  
+/*Hash.implement({
+	findKey: function(key) {  
         if(key === null || typeof key == 'undefined') return null;
 		var val = this.keyOf(key);
         if(val && val != 'constructor') return val;
@@ -24,7 +22,7 @@ Hash.implement({
         }
 		return '';
     }   
-});
+});*/
 
 var GetClass = new Class({
 	get_class: function() {
@@ -34,9 +32,18 @@ var GetClass = new Class({
 	}
 });
 
-GetClass.get = function(obj) {
-	return $H(window).keyOf(obj);//.keyOf(obj);
-}
+GetClass.get = (function() {
+	var ignore = ['sessionStorage'];
+	return function(obj) {
+		var win = new Hash({});
+		for(var key in window) {
+			if(ignore.indexOf(key) !== -1) continue;			
+			win.set(key, window[key]);
+		}
+		return win.keyOf(obj);//.keyOf(obj);
+	}
+})();
+
 GetClass.getName = function(obj) {
 	return obj.$name ?
 		obj.$name :

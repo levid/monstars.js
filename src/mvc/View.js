@@ -31,17 +31,7 @@ var View = new Class({
 		var html = data ? fn($merge(data, View.Helpers)) : '';
 		this.fireEvent('render');
 		return html;
-    },
-	
-	model: function(model) {
-		/*if(model) {
-			this.$model = model;
-			this.content = model.data;
-			return this;
-		} else {
-			return this.$model;
-		}*/
-	}
+    }
     
 });
 
