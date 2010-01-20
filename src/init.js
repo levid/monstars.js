@@ -36,7 +36,6 @@ var init = (function() {
 			if(self.query().split(',').indexOf('compress') !== -1) {
 				//include compressed file.
 			} else {
-				
 				pub.queue('config.js',priv.get_app_dir(self));
 			}
 			
@@ -149,7 +148,7 @@ var init = (function() {
 		
 		execute_next: function() {
 			if(!priv.EXECUTING && priv.QUEUE[0]) {
-				if(priv.QUEUE[0] instanceof Script && priv.QUEUE[0].isLoaded()) {
+				if(priv.QUEUE[0] instanceof Script && (!priv.use_preload() || priv.QUEUE[0].isLoaded())) {
 					priv.EXECUTING = true;
 					var script = priv.QUEUE.shift();
 					script.execute(function() {
@@ -164,7 +163,7 @@ var init = (function() {
 			}
 		},
 		
-		SCRIPTS: [],
+		SCRIPTS: {},
 		
 		VIEWS: [],
 		
@@ -207,9 +206,6 @@ var init = (function() {
 						loaded();
 					}
 				}
-				var cacheInterval = setInterval(function() {
-					
-				}, 1);
 			}
 			if(this.script) {
 				priv.HEAD.replaceChild(script, this.script);
@@ -280,7 +276,9 @@ var init = (function() {
 						S.load(priv.execute_next);
 						priv.QUEUE.push(S);
 					} else {
-						S.execute();
+						//only executing
+						priv.QUEUE.push(S);
+						priv.execute_next();
 					}
 					
 					
@@ -367,20 +365,18 @@ var init = (function() {
 		},
 		tests: function() {
 			if(arguments) {
-				this.queue('TestSuite', priv.ROOT.getPath() + 'mvc');
+				pub.queue('TestSuite', priv.ROOT.dir() + 'mvc');
 				var files = Array.prototype.slice.apply(arguments);
-			
 				for(var i = 0; i < files.length; i++) {
 					files[i] = files[i].replace(/\.js$/,'').replace('Test','') + 'Test';
 					priv.TESTS.push(files[i]);
 				}
-				this.queue(files, priv.APP_DIR + 'tests');
-				this.queue(this.testsuite);
-				this.queue(function() {
-					if(!priv.EXECUTING && !priv.QUEUE.length) {
+				pub.queue(files, priv.APP_DIR + 'tests');
+				pub.queue(function() {
+					if(!priv.EXECUTING && !priv.QUEUE.length && window.TestSuite) {
 						window.TestSuite(priv.TESTS);
 					} else {
-					   setTimeout(arguments.callee, 1);
+						setTimeout(arguments.callee, 1);
 					}
 				});
 			}

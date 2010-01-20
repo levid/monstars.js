@@ -1,4 +1,6 @@
 var TestSuite = function(tests) {
+	if(TestSuite._sweet) return;
+	TestSuite._sweet = true;
 	var casesCount = 0;
 	var TESTS = tests;
 	for(var T in TESTS) {
