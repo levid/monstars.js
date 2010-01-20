@@ -57,7 +57,7 @@ Model.Ajax = new Class({
     
     url: function(action) {
         if(this.useFixture) {
-			return init.app_dir() + 'tests/fixtures/'+this.get_class()+'.js';
+			return init.app_dir() + 'tests/fixtures/'+this.get_class()+'s.js';
 		}
 		var STATIC = window[this.get_class()].$urls || {};
         var root = STATIC.root || '/';
@@ -75,8 +75,9 @@ Model.Ajax.get = function(type, options, callback) {
 };
 
 Model.Ajax.find = function(conditions, options, callback) {
+	var that = this;
 	if(this.prototype.useFixtures) {
-		var uri = init.app_dir() + 'tests/fixtures/'+GetClass.get(this).toLowerCase()+'.json';
+		var uri = init.app_dir() + 'tests/fixtures/'+GetClass.get(this).toLowerCase()+'s.json';
 	} else {
 		var STATIC = window[GetClass.get(this)].$urls || {},
 			root = STATIC.root || '/',
@@ -91,18 +92,22 @@ Model.Ajax.find = function(conditions, options, callback) {
 			if($type(callback) == 'function') {
 				var models = [];
 				$splat(response).each(function(m) {
-					models.push(new this(m));
+					models.push(new that(m));
 				});
 				callback(models);
 			}
 		},
 		onFailure: function(e) {
 			console.error(e);
-			throw e;
+			//throw e;
 		}
-	}).send(Hash.toQueryString(conditions));
+	}).send(conditions && Hash.toQueryString(conditions));
 };
 
 Model.Ajax.findAll = function(callback) {
     return this.find(null, null, callback);
 };
+
+Request.implement('isSuccess', function() {
+	return (this.status >= 200 && this.status < 300) || (this.status == 0 && this.xhr.responseText != '');
+});

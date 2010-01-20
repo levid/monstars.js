@@ -13,8 +13,8 @@ var Expense = new Class({
 	
 });
 
-/*//todo - Make this use fixtures.
-Expense.findAll = function(callback) {
+//todo - Make this use fixtures.
+/*Expense.findAll = function(callback) {
     console.log('hijacked Expense.findAll');
 	var list = [];
 	list[0] = new Expense({id:1, title: 'Pancakes', description: 'Kevin eats lots of pancakes.', price: 500 });

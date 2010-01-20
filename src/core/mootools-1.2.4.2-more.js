@@ -1,7 +1,6 @@
 //MooTools More, <http://mootools.net/more>. Copyright (c) 2006-2009 Aaron Newton <http://clientcide.com/>, Valerio Proietti <http://mad4milk.net> & the MooTools team <http://mootools.net/developers>, MIT Style License.
-//Contains: Class.Occlude, Event.Delegation
-MooTools.More={version:"1.2.4.2dev",build:"%build%"};Class.Occlude=new Class({occlude:function(c,b){b=document.id(b||this.element);var a=b.retrieve(c||this.property);
-if(a&&!$defined(this.occluded)){return this.occluded=a;}this.occluded=false;b.store(c||this.property,this);return this.occluded;}});(function(){var d=/(.*?):relay\(([^)]+)\)$/,c=/[+>~\s]/,f=function(g){var h=g.match(d);
+//Contains: Element.Delegation
+MooTools.More={version:"1.2.4.2dev",build:"%build%"};(function(){var d=/(.*?):relay\(([^)]+)\)$/,c=/[+>~\s]/,f=function(g){var h=g.match(d);
 return !h?{event:g}:{event:h[1],selector:h[2]};},b=function(m,g){var k=m.target;if(c.test(g=g.trim())){var j=this.getElements(g);for(var h=j.length;h--;
 ){var l=j[h];if(k==l||l.hasChild(k)){return l;}}}else{for(;k&&k!=this;k=k.parentNode){if(Element.match(k,g)){return document.id(k);}}}return null;};var a=Element.prototype.addEvent,e=Element.prototype.removeEvent;
 Element.implement({addEvent:function(j,i){var k=f(j);if(k.selector){var h=this.retrieve("$moo:delegateMonitors",{});if(!h[j]){var g=function(m){var l=b.call(this,m,k.selector);

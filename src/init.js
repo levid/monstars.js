@@ -1,23 +1,45 @@
 //MVC init.js. Copyright (c) 2009-2010 Sean McArthur <http://monstarlab.com/>, MIT Style License.
+if(window.init) throw new Error('init.js already included.');
 var init = (function() {
 
 	var priv = {
+		
+		viewExt: '.html',
 		
 		HEAD: document.getElementsByTagName('head')[0],
 		
 		ROOT: null,
 		
+		PAGE: '',
+		
 		APP_DIR: null,
 		
 		QUEUE: [],
 		
+		env: {},
+		
+		use_preload: (function() {
+			var is_opera = window.opera && Object.prototype.toString.call(window.opera) == "[object Opera]",
+				is_gecko =  (function(o) { o[o] = o+""; return o[o] != o+""; })(new String("__count__"));
+			//firefox and opera keep executing order. and firefox doesnt
+			// fire onload with a fake mimeType.
+			return function() {
+				return !(is_opera || is_gecko);
+			}
+		})(),
+		
 		start: function() {
-			var self = this.get_init_script();
-			this.ROOT = self.dir();
+			var self = priv.get_init_script();
+			priv.PAGE = new Script(window.location.href);
+			priv.set_environment(self);
+			priv.domready();
+			if(self.query().split(',').indexOf('compress') !== -1) {
+				//include compressed file.
+			} else {
+				
+				pub.queue('config.js',priv.get_app_dir(self));
+			}
 			
-			this.domready();
-
-			pub.queue('config.js',this.get_app_dir(self));
 		},
 		
 		get_init_script: function() {
@@ -30,19 +52,25 @@ var init = (function() {
 					break;
 				}
 			}
-			var SELF = new Script(self_script)
+			var SELF = priv.ROOT = new Script(self_script)
 			SELF._loaded = true;
 			return SELF;
 		},
 		
+		set_environment: function(self_script) {
+			var options = self_script.query().split(',');
+			priv.env.test = (options.indexOf('test') !== -1);
+			priv.env.compress = (options.indexOf('compress') !== -1);
+		},
+		
 		get_app_dir: function(init_script) {
-			var path = init_script.query();
+			var path = init_script.query().split(',')[0];
 			if(!path)
 				throw new Error('Must include app directory after init.js');
 			
 			var dots = path.match(/\.\.\//g);
 			if(dots && dots.length) {
-				var root = this.ROOT;
+				var root = priv.ROOT.dir();
 				for(var i = 0; i < dots.length; i++) {
 					root = root.replace(/[a-zA-Z0-9\-_]+\/$/,'');
 				}
@@ -57,11 +85,13 @@ var init = (function() {
 				loaded = true;
 				(function() {
 					try {
-						Browser.loaded = true;
-						window.fireEvent('domready');
-						document.fireEvent('domready');
+						Browser.loaded = true;						
 					} catch(e) {
 						setTimeout(arguments.callee, 0);
+					}
+					if(window.Browser && Browser.loaded) {
+						window.fireEvent('domready');
+						document.fireEvent('domready');
 					}
 				})();
 			};
@@ -107,7 +137,7 @@ var init = (function() {
 		
 		request: function(path) {
 			var request = window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
-			request.open('GET', path, false);
+			request.open('GET', path, false); //asynchronous = false
 			try {
 				request.send();
 			} catch(e) { return null; }
@@ -177,6 +207,9 @@ var init = (function() {
 						loaded();
 					}
 				}
+				var cacheInterval = setInterval(function() {
+					
+				}, 1);
 			}
 			if(this.script) {
 				priv.HEAD.replaceChild(script, this.script);
@@ -199,8 +232,25 @@ var init = (function() {
 			return this._loaded;
 		},
 		
+		protocol: function() {
+			return this.fileName.match(/^(https?|file)/)[1];
+		},
+		
+		domain: function() {
+			if (this.protocol() == 'file') return null;
+			return this.fileName.match(/^https?:\/\/([^\/]*)/)[1];
+		},
+		
+		isCrossDomain: function() {
+			return this.domain() != priv.PAGE.domain()
+		},
+		
+		getPath: function() {
+			return this.fileName.replace('?'+this.query(), '');
+		},
+		
 		dir: function() {
-			return this.fileName.replace(/[a-zA-Z0-9\-_]+\.js(.*)$/,'');
+			return this.fileName.replace(this.query(),'').replace(/[^\/]+$/, '');//(/[a-zA-Z0-9\-_]+\.js(.*)$/,'');
 		},
 		
 		query: function() {
@@ -221,21 +271,32 @@ var init = (function() {
 		
 		queue: function(files, path) {
 			if(!(files instanceof Array)) files = [files];
-			path = path || priv.ROOT;
+			path = path || priv.ROOT.dir();
 			if(path.substring(path.length-1) != '/')  path += '/';
 			for(var i = 0; i < files.length; i++) {
 				if(typeof files[i] == 'string') {
 					var S = new Script(path + files[i].replace(/\.js$/,'') + '.js')
-					S.load(priv.execute_next);
-					priv.QUEUE.push(S);
+					if (priv.use_preload()) {
+						S.load(priv.execute_next);
+						priv.QUEUE.push(S);
+					} else {
+						S.execute();
+					}
+					
+					
 				} else if (typeof files[i] == 'function') {
 					priv.QUEUE.push(files[i]);
 				}
 			}
+			return pub;
 		},
 		core: function() {
-			var core_files = ['mootools-1.2.4-core','mootools-1.2.4.1-more','Core'];
-			this.queue(core_files, priv.ROOT + 'core');
+			var core_files = ['mootools-1.2.4-core','mootools-1.2.4.2-more'];
+			if(priv.env.test) {
+				core_files = (core_files.join('-nc|')+'-nc').split('|');
+			}
+			core_files.push('Core');
+			return this.queue(core_files, priv.ROOT.dir() + 'core');
 		},
 		mvc: function() {
 			var standard_files = ['GetClass','Element.Serialize','Model','Model.Fields','Controller','View'];
@@ -246,13 +307,13 @@ var init = (function() {
 			} else {
 				files = standard_files;
 			}
-			this.queue(files, priv.ROOT + 'mvc');
+			return this.queue(files, priv.ROOT.dir() + 'mvc');
 		},
 		app: function(app_funcs) {
 			if(typeof app_funcs == 'function') {
 				app_funcs();
 			}
-			this.queue('Dispatcher', priv.ROOT + 'mvc');
+			return this.queue('Dispatcher', priv.ROOT.dir() + 'mvc');
 		},
 		models: function() {
 			if(arguments) {
@@ -260,6 +321,7 @@ var init = (function() {
 			
 				this.queue(files, priv.APP_DIR + 'models');
 			}
+			return pub;
 		},
 		controllers: function() {
 			if(arguments) {
@@ -270,11 +332,12 @@ var init = (function() {
 				}
 				this.queue(files, priv.APP_DIR + 'controllers');
 			}
+			return pub;
 		},
 		
 		//checks cache (priv.VIEWS), otherwise, XHR gets contents.
 		view: function(view_name) {
-			var fileName = priv.APP_DIR + 'views/' + view_name.replace(/\.html$/,'') + '.html';
+			var fileName = priv.APP_DIR + 'views/' + view_name.replace(/\.html$/,'') + priv.viewExt;
 			if(!priv.VIEWS[fileName]) {
 				priv.VIEWS[fileName] = priv.request(fileName);
 			}
@@ -287,7 +350,7 @@ var init = (function() {
 				var files = Array.prototype.slice.apply(arguments);
 				for(var i = 0; i < files.length; i++) {
 					
-					var fileName = priv.APP_DIR + 'views/' + files[i].replace(/\.html$/,'') + '.html';
+					var fileName = priv.APP_DIR + 'views/' + files[i].replace(/\.html$/,'') + priv.viewExt;
 					if(!priv.VIEWS[fileName]) {
 						var viewScript = new Script(fileName);
 						if(!viewScript.isLoaded()) {
@@ -300,10 +363,11 @@ var init = (function() {
 					}
 				}
 			}
+			return pub;
 		},
 		tests: function() {
 			if(arguments) {
-				this.queue('TestSuite', priv.ROOT + 'mvc');
+				this.queue('TestSuite', priv.ROOT.getPath() + 'mvc');
 				var files = Array.prototype.slice.apply(arguments);
 			
 				for(var i = 0; i < files.length; i++) {
@@ -320,6 +384,7 @@ var init = (function() {
 					}
 				});
 			}
+			return pub;
 		}
 	};
 
