@@ -3,7 +3,7 @@
 */
 var Core = {
 	
-	$version: '0.5',
+	version: '0.5.1',
 	
 	$controllers: [],
 	
@@ -25,19 +25,16 @@ var Core = {
 /*
 	Overwriting Extends mutator to copy static methods as well.
 */
+(function() {
+var _oldExtends = Class.Mutators.Extends;
 Class.Mutators.Extends = function (parent){
 	var dont_overwrite = ['$family', 'implement', 'constructor'];
 	for(var k in parent) {
 		if(parent.hasOwnProperty(k) && dont_overwrite.indexOf(k) == -1)
 			this[k] = parent[k];
 	}
-	this.parent = parent;
-	this.prototype = Class.instantiate(parent);
-
-	this.implement('parent', function(){
-		var name = this.caller._name, previous = this.caller._owner.parent.prototype[name];
-		if (!previous) throw new Error('The method "' + name + '" has no parent.');
-		return previous.apply(this, arguments);
-	}.protect());
-
+	
+	_oldExtends.call(this, parent);
 };
+
+})();
