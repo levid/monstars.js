@@ -38,3 +38,13 @@ Class.Mutators.Extends = function (parent){
 };
 
 })();
+
+/*
+	These properties on Mutators blow up class if you try to define a method
+	on your class with the same name.
+	
+	Specifically, toString was gotcha'ing me.
+*/
+['toString', 'toLocaleString', 'valueOf', 'toSource', 'watch', 'unwatch', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable'].each(function(method){
+	Class.Mutators[method] = $arguments(0);
+});

@@ -69,9 +69,9 @@ Element.implement('model', function() {
 	if(id) {
 		places_to_check += id + ' ';
 	}
+	places_to_check += this.className;
 	
 	var reg = RegExp('([a-zA-Z_]+?)_([^\\s]+)', 'g'),
-		places_to_check = this.className,
 		match;
 		
 	while(match = reg.exec(places_to_check)) {

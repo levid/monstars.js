@@ -6,14 +6,16 @@ var View = new Class({
     Implements: [Events],
 	
 	template: null,
-    
-    content: {},
+	
+	output: null,
     
     initialize: function(view) {
         this.template = init.view(view);
     },
     
     render: function(data) {
+		//TODO - cache this Function
+		//currently its being re-constructed every View call. wasteful.
 		var str = this.template;
 		var fn = new Function('obj',
 			'var p=[],print=function(){p.push.apply(p,arguments);};' +
@@ -28,10 +30,18 @@ var View = new Class({
 				.split("\r").join("\\'")
 			+ "');}return p.join('');");
 		
-		var html = data ? fn($merge(data, View.Helpers)) : '';
+		this.output = data ? fn($merge(data, View.Helpers)) : '';
 		this.fireEvent('render');
-		return html;
-    }
+		return this;
+    },
+	
+	toString: function() {
+		return this.output;
+	},
+	
+	toElement: function() {
+		return new Element('div', { html: this.output }).getFirst();
+	}
     
 });
 

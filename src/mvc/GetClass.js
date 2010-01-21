@@ -28,19 +28,21 @@ var GetClass = new Class({
 	get_class: function() {
 		return this.$class ?
 			this.$class :
-			this.$class = GetClass.get_class(this);//keyOf(this.constructor);
+			this.$class = GetClass.get_class(this);
 	}
 });
 
 GetClass.get = (function() {
 	var ignore = ['sessionStorage'];
-	return function(obj) {
+	return Browser.Engine.gecko ? function(obj) {
 		var win = new Hash({});
 		for(var key in window) {
 			if(ignore.indexOf(key) !== -1) continue;			
 			win.set(key, window[key]);
 		}
-		return win.keyOf(obj);//.keyOf(obj);
+		return win.keyOf(obj);
+	} : function(obj) {
+		return $H(window).keyOf(obj); //findKey(obj);
 	}
 })();
 
