@@ -33,12 +33,11 @@ var init = (function() {
 			priv.PAGE = new Script(window.location.href);
 			priv.set_environment(self);
 			priv.domready();
-			if(self.query().split(',').indexOf('compress') !== -1) {
-				//include compressed file.
+			if(priv.env.compress || priv.env.deploy) {
+				pub.queue('compressed.js', priv.get_app_dir(self));
 			} else {
 				pub.queue('config.js',priv.get_app_dir(self));
 			}
-			
 		},
 		
 		get_init_script: function() {

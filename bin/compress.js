@@ -42,7 +42,7 @@ var init = (function() {
 	
 	var include = function(path) {
 		//include
-		src += readFile(path);
+		src += readFile(path) + "\n";
 	}
 	
 	var includeArgs = function(func) {
@@ -53,12 +53,12 @@ var init = (function() {
 	};
 	
 	var compress = function(file) {
-		if(com.yahoo.platform.yui.compressor.YUICompressor) {
+		if(com.yahoo.platform.yui.compressor.JavaScriptCompressor) {
 			//importClass(com.yahoo.platform.yui.compressor.JavaScriptCompressor);
 			var URLClassLoader = Packages.java.net.URLClassLoader;
 			var URL = java.net.URL;
 			
-			var yuiC = new java.io.File("bin/yui-compressor-2.4.2.jar");
+			var yuiC = new java.io.File("bin\yui-compressor-2.4.2.jar");
 			var yuiC_url = yuiC.toURL();
 			var urls = java.lang.reflect.Array.newInstance(URL,1);
 			urls[0] = new URL(yuiC_url);
@@ -99,14 +99,14 @@ var init = (function() {
 			
 			var packed = new File(config.dir() +'packed.js');
 			packed.write(src);
-			compress(packed);
+			//compress(packed);
 			//print(src);
-			print('Files packed into: '+compressed.fileName);
+			print('Files packed into: '+packed.fileName);
 		},
 		core: function() {
 			(includeArgs(function(p) {
 				return 'src/core/'+p+'.js';
-			}))('mootools-1.2.4-core','mootools-1.2.4.2-more','Core');
+			}))('mootools-1.2.4-core-nc','mootools-1.2.4.2-more-nc','Core');
 		},
 		mvc: function() {
 			(includeArgs(function(p) {
