@@ -351,11 +351,13 @@ var init = (function() {
 					if(!priv.VIEWS[fileName]) {
 						var viewScript = new Script(fileName);
 						if(!viewScript.isLoaded()) {
-							viewScript.load(function() {
-								var file = this.fileName;
-								this.script.parentNode.removeChild(this.script);
-								
-							});
+							(function(originalPath) {
+								viewScript.load(function() {
+									var file = this.fileName;
+									this.script.parentNode.removeChild(this.script);
+									pub.view(originalPath);
+								});
+							})(files[i]);
 						}
 					}
 				}
