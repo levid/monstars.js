@@ -257,6 +257,15 @@ var init = (function() {
 		}
 		
 	};
+	
+	var eachArg = function(func) {
+		return function() {
+			for(var i = 0; i < arguments.length; i++) {
+				func(arguments[i]);
+			}
+			return this;
+		};
+	};
 
 	var pub = {
 		
@@ -293,46 +302,26 @@ var init = (function() {
 				core_files = (core_files.join('-nc|')+'-nc').split('|');
 			}
 			core_files.push('Core');
-			return this.queue(core_files, priv.ROOT.dir() + 'core');
+			return pub.queue(core_files, priv.ROOT.dir() + 'core');
 		},
 		mvc: function() {
-			var standard_files = ['GetClass','Element.Serialize','Model','Model.Fields','Controller','View'];
-			var files;
-			if(arguments) {
-				var extra_files = Array.prototype.slice.apply(arguments);
-				files = standard_files.concat(extra_files);
-			} else {
-				files = standard_files;
-			}
-			return this.queue(files, priv.ROOT.dir() + 'mvc');
+			(eachArg(function(p) {
+				pub.queue(p, priv.ROOT.dir() + 'mvc');
+			})).apply(window, ['GetClass','Element.Serialize','Model','Model.Fields','Controller','View'].concat(Array.prototype.slice.apply(arguments)));
 		},
 		app: function(app_funcs) {
 			if(typeof app_funcs == 'function') {
 				app_funcs();
 			}
-			return this.queue('Dispatcher', priv.ROOT.dir() + 'mvc');
-		},
-		models: function() {
-			if(arguments) {
-				var files = Array.prototype.slice.apply(arguments);
-			
-				this.queue(files, priv.APP_DIR + 'models');
-			}
-			return pub;
-		},
-		controllers: function() {
-			if(arguments) {
-				var files = Array.prototype.slice.apply(arguments);
-			
-				for(var i = 0; i < files.length; i++) {
-					files[i] = files[i].replace(/\.js$/,'').replace('Controller','') + 'Controller';
-				}
-				this.queue(files, priv.APP_DIR + 'controllers');
-			}
-			return pub;
+			return pub.queue('Dispatcher', priv.ROOT.dir() + 'mvc');
 		},
 		
+		models: eachArg(function(p) { pub.queue(p, priv.APP_DIR + 'models'); }),
+
+		controllers: eachArg(function(p) { pub.queue(p.replace('Controller','') + 'Controller', priv.APP_DIR + 'controllers'); }),
+		
 		//checks cache (priv.VIEWS), otherwise, XHR gets contents.
+		//XHR could be problematic for views if you store the JS on a seperate domain
 		view: function(view_name) {
 			var fileName = priv.APP_DIR + 'views/' + view_name.replace(/\.html$/,'') + priv.viewExt;
 			if(!priv.VIEWS[fileName]) {
@@ -342,45 +331,33 @@ var init = (function() {
 		},
 		
 		//this lets us preload views if we want to
-		views: function() {
-			if(arguments) {
-				var files = Array.prototype.slice.apply(arguments);
-				for(var i = 0; i < files.length; i++) {
-					
-					var fileName = priv.APP_DIR + 'views/' + files[i].replace(/\.html$/,'') + priv.viewExt;
-					if(!priv.VIEWS[fileName]) {
-						var viewScript = new Script(fileName);
-						if(!viewScript.isLoaded()) {
-							(function(originalPath) {
-								viewScript.load(function() {
-									var file = this.fileName;
-									this.script.parentNode.removeChild(this.script);
-									pub.view(originalPath);
-								});
-							})(files[i]);
-						}
-					}
+		views: eachArg(function(p) {
+			var fileName = priv.APP_DIR + 'views/' + p.replace(/\.html$/,'') + priv.viewExt;
+			if(!priv.VIEWS[fileName]) {
+				var viewScript = new Script(fileName);
+				if(!viewScript.isLoaded()) {
+					viewScript.load(function() {
+						var file = this.fileName;
+						this.script.parentNode.removeChild(this.script);
+						pub.view(p);
+					});
 				}
 			}
-			return pub;
-		},
+		}),
+
 		tests: function() {
-			if(arguments) {
-				pub.queue('TestSuite', priv.ROOT.dir() + 'mvc');
-				var files = Array.prototype.slice.apply(arguments);
-				for(var i = 0; i < files.length; i++) {
-					files[i] = files[i].replace(/\.js$/,'').replace('Test','') + 'Test';
-					priv.TESTS.push(files[i]);
+			pub.queue('TestSuite', priv.ROOT.dir() + 'mvc');
+			(eachArg(function(p) {
+				pub.queue(p.replace('Test','') + 'Test', priv.APP_DIR + 'tests');
+				priv.TESTS.push(p);
+			}))(arguments);
+			pub.queue(function() {
+				if(!priv.EXECUTING && !priv.QUEUE.length && window.TestSuite) {
+					window.TestSuite(priv.TESTS);
+				} else {
+					setTimeout(arguments.callee, 1);
 				}
-				pub.queue(files, priv.APP_DIR + 'tests');
-				pub.queue(function() {
-					if(!priv.EXECUTING && !priv.QUEUE.length && window.TestSuite) {
-						window.TestSuite(priv.TESTS);
-					} else {
-						setTimeout(arguments.callee, 1);
-					}
-				});
-			}
+			});
 			return pub;
 		}
 	};
