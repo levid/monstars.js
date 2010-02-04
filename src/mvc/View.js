@@ -1,7 +1,14 @@
 /*
 	View. - Representation of data from Models. Parses a template file, and renders.
 */
-var View = new Class({
+(function() {
+	
+//caches processed View Template functions, so we only regex and eval once.
+var viewFuncs = {};
+
+/*%pre-compiled%*/
+
+this.View = new Class({
     
     Implements: [Events],
 	
@@ -10,27 +17,29 @@ var View = new Class({
 	output: null,
     
     initialize: function(view) {
-        this.template = init.view(view);
+		this.template = viewFuncs[view] || (viewFuncs[view] = this.process(init.view(view)));
     },
+	
+	//if passed a function, we assume the function is a pre-compiled template.
+	process: function(template) {
+		return typeof template == 'function' ?
+			template :
+			new Function('obj',
+				'var p=[],print=function(){p.push.apply(p,arguments);};' +
+				'with(obj){p.push(\'' +
+				template
+					.replace(/[\r\t\n]/g, " ")
+					.split("<%").join("\t")
+					.replace(/((^|%>)[^\t]*)'/g, "$1\r")
+					.replace(/\t=(.*?)%>/g, "',$1,'")
+					.split("\t").join("');")
+					.split("%>").join("p.push('")
+					.split("\r").join("\\'")
+				+ "');}return p.join('');");
+	}.protect(),
     
     render: function(data) {
-		//TODO - cache this Function
-		//currently its being re-constructed every View call. wasteful.
-		var str = this.template;
-		var fn = new Function('obj',
-			'var p=[],print=function(){p.push.apply(p,arguments);};' +
-			'with(obj){p.push(\'' +
-			str
-				.replace(/[\r\t\n]/g, " ")
-				.split("<%").join("\t")
-				.replace(/((^|%>)[^\t]*)'/g, "$1\r")
-				.replace(/\t=(.*?)%>/g, "',$1,'")
-				.split("\t").join("');")
-				.split("%>").join("p.push('")
-				.split("\r").join("\\'")
-			+ "');}return p.join('');");
-		
-		this.output = data ? fn($merge(data, View.Helpers)) : '';
+		this.output = data ? this.template($merge(data, View.Helpers)) : this.template(View.Helpers);
 		this.fireEvent('render');
 		return this;
     },
@@ -44,6 +53,8 @@ var View = new Class({
 	}
     
 });
+
+})();
 
 View.Helpers = {
 	
