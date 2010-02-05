@@ -1,8 +1,8 @@
 var CoreTest = new TestCase({
-	test_registerControllers: function() {
+	'register_controllers': function() {
 		Core.register_controller(this.CoreController);
 		var Cs = Core.retrieve_controllers();
-		this.assertEqual(this.CoreController, Cs[0]);
+		this.assertEqual(this.CoreController, Cs[0], 'should keep track of controller');
 	}
 }, {
 	onSetup: function() {

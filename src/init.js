@@ -271,8 +271,7 @@ var init = (function() {
 		
 		app_dir: function() {
 			return priv.APP_DIR;
-		},
-		
+		},	
 		queue: function(files, path) {
 			if(!(files instanceof Array)) files = [files];
 			path = path || priv.ROOT.dir();
@@ -288,8 +287,6 @@ var init = (function() {
 						priv.QUEUE.push(S);
 						priv.execute_next();
 					}
-					
-					
 				} else if (typeof files[i] == 'function') {
 					priv.QUEUE.push(files[i]);
 				}
@@ -348,9 +345,10 @@ var init = (function() {
 		tests: function() {
 			pub.queue('TestSuite', priv.ROOT.dir() + 'mvc');
 			(eachArg(function(p) {
-				pub.queue(p.replace('Test','') + 'Test', priv.APP_DIR + 'tests');
-				priv.TESTS.push(p);
-			}))(arguments);
+				var test = p.replace('Test','') + 'Test';
+				pub.queue(test, priv.APP_DIR + 'tests');
+				priv.TESTS.push(test);
+			})).apply(window, arguments);
 			pub.queue(function() {
 				if(!priv.EXECUTING && !priv.QUEUE.length && window.TestSuite) {
 					window.TestSuite(priv.TESTS);

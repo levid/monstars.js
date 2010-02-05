@@ -1,8 +1,12 @@
 var ModelAjaxTest = new TestCase({
-	test_findAll: function() {
-		//Test.findAll(function(models) {
-		//	console.log(models);
-		//});
+	'findAll': function() {
+		var that = this;
+		this.wait();
+		Test.findAll(function(models) {
+			
+			that.assertTrue(models, 'should instantiate all found results');
+			that.resume();
+		});
 	}
 }, {
 	onSetup: function() {

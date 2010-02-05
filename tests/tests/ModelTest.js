@@ -36,8 +36,8 @@ var ModelTest = new TestCase({
 		var m = new TestModel({ id:13 });
 		var el = new Element('div');
 		el.addClass(m.identity());
-		//this.assertTrue(m instanceof el.model());
 		this.assertEqual(el.model(), m);
+		this.assertEqual(el.get('model'), m);
 	}
 }, {
 	onSetup: function() {

@@ -1,15 +1,12 @@
 var TestSuite = function(tests) {
 	if(TestSuite._sweet) return;
 	TestSuite._sweet = true;
-	var casesCount = 0;
 	var TESTS = tests;
-	for(var T in TESTS) {
-		if(!TESTS.hasOwnProperty(T)) continue;
-		var testCase = typeof TESTS[T] == 'string' ? window[TESTS[T]] : TESTS[T];
+	for(var t = 0; t < TESTS.length; t++) {
+		var testCase = typeof TESTS[t] == 'string' ? window[TESTS[t]] : TESTS[t];
 		if(testCase instanceof window.TestCase) {
-			testCase.run();
-			casesCount++;
+			testCase.start();
 		}
 	}
-	$(document.body).grab(new Element('div', { text: casesCount + ' Test Cases.' }));
+	//$(document.body).grab(new Element('div', { text: casesCount + ' Test Cases.' }));
 };
