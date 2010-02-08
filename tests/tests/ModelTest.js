@@ -1,5 +1,5 @@
 var ModelTest = new TestCase({
-	test_initialize: function() {
+	'initialize': function() {
 		var m = new TestModel({id: 44123, title:'Init Test', fake: "Won't Exist"});
 		
 		this.assertTrue(m instanceof Model);
@@ -7,15 +7,15 @@ var ModelTest = new TestCase({
 		this.assertEqual(m.get('title'), 'Init Test');
 		this.assertFalse(m.get('fake'));
 	},
-	test_set: function() {
+	'set and get': function() {
 		var m = new TestModel();
-		this.assertFalse(m.get('title'));
+		this.assertFalse(m.get('title'), 'no values at construction should mean no values set');
 		
 		m.set('title', 'TestTitle');
-		this.assertEqual(m.get('title'), 'TestTitle');
+		this.assertEqual(m.get('title'), 'TestTitle', 'can use set(key, value)');
 		
 		m.set({title: 'DifferentTitle'});
-		this.assertEqual(m.get('title'), 'DifferentTitle');
+		this.assertEqual(m.get('title'), 'DifferentTitle','can use set with object of key/value pairs');
 	},
 	test_fields: function() {
 		var FieldModel = new Class({
@@ -26,18 +26,17 @@ var ModelTest = new TestCase({
 			}
 		});
 	},
-	test_identity: function() {
+	'identity': function() {
 		var m = new TestModel({ id:13 });
 		var el = new Element('div');
 		el.addClass(m.identity());
-		this.assertTrue(el.hasClass('TestModel_13'));
+		this.assertTrue(el.hasClass('TestModel_13'), 'should return Class + underscore + id');
 	},
-	test_Element_model: function() {
+	'el.get(\'model\')': function() {
 		var m = new TestModel({ id:13 });
 		var el = new Element('div');
 		el.addClass(m.identity());
-		this.assertEqual(el.model(), m);
-		this.assertEqual(el.get('model'), m);
+		this.assertEqual(el.get('model'), m, 'should return the model instance');
 	}
 }, {
 	onSetup: function() {

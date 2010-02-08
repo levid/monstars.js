@@ -9,3 +9,7 @@
 	#TestBox .pass { background:#00ae00; }
 	#TestBox .fail { background:#f00000; }
 	#TestBox .warn { background:#d9a300; }
+	
+		#TestBox .unit-test.closed .test { display:none; }
+		#TestBox .unit-test .test { padding:5px; margin:5px 0 0; border:1px solid #fff; }
+		

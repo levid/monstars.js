@@ -1,15 +1,4 @@
-(function() {
-
-var AssertionError = new Class({
-	initialize: function(msg) {
-		this.message = msg;
-	},
-	toString: function() {
-		return this.message;
-	}
-});
-
-this.TestCase = new Class({
+var TestCase = new Class({
 	
 	Implements: [Options, Events, GetClass],
 	
@@ -34,7 +23,7 @@ this.TestCase = new Class({
 	
 	build: function() {
 		var box = $('TestBox') || new Element('div', {id: 'TestBox'}).inject($(document.body));
-		this.testBox = new Element('div', {
+		this.testCaseBox = new Element('div', {
 			'class': 'test-case closed',
 			id: GetClass.get(this),
 			html: '<h2 class="title">'+GetClass.get(this)+'</h2><span class="summary"></span>'
@@ -46,14 +35,11 @@ this.TestCase = new Class({
 		var passedCount = new Element('span', { text: this._passed, 'class':'pass' });
 		var warnedCount = new Element('span', { text: this._warned, 'class':'warn' });
 		var failedCount = new Element('span', { text: this._failed, 'class':'fail' });
-		//if(this._passed)
-			this.testBox.getElement('.summary').grab(passedCount);
-		//if(this._warned)
-			this.testBox.getElement('.summary').grab(warnedCount);
-		
-			this.testBox.getElement('.summary').grab(failedCount);		
+		this.testCaseBox.getElement('.summary').grab(passedCount);
+		this.testCaseBox.getElement('.summary').grab(warnedCount);
+		this.testCaseBox.getElement('.summary').grab(failedCount);		
 		if(this._failed) {
-			this.testBox.removeClass('closed');
+			this.testCaseBox.removeClass('closed');
 		}
 		this.fireEvent('conclude');
 	}.protect(),
@@ -100,16 +86,7 @@ this.TestCase = new Class({
 			this.assertTrue(false, e);
 			if(this._waitTimeout) {
 				this.resume();
-			}
-			/*if(e instanceof AssertionError) {
-				this.fail(test, e);
-				if(this._waitTimeout) {
-					this.resume();
-				}
-			} else {
-				throw e;
-			}*/
-			
+			}			
 		}
 	},
 	
@@ -128,41 +105,46 @@ this.TestCase = new Class({
 		this.execute.delay(1, this);
 	},
 	
-	pass: function(test) {
+	pass: function(test, title) {
 		this._passed++;
-		return { status:'pass', msg: 'Passed: ' + this._currentTestKey };
+		return { status:'pass', msg: (title || this._currentTestKey)  };
 	}.protect(),
 	
-	fail: function(test, error) {
+	fail: function(test, error, title) {
 		this._failed++;
-		return { status:'fail', msg: 'Failed: '+ this._currentTestKey +' - '+ error };
+		return { status:'fail', msg: (title || this._currentTestKey) + ': '+ error };
 	}.protect(),
 	
-	warn: function(test) {
+	warn: function(test, title) {
 		this._warned++;
-		return { status:'warn', msg: 'Warn: '+ this._currentTestKey +' - No Assertions were made.' };
+		return { status:'warn', msg: (title || this._currentTestKey) + ': No Assertions were made.' };
 	}.protect(),
 	
 	results: function(test) {
 		var asserts = test._asserts,
-			results;
+			results = [],
+			unitStatus = 'pass';
 		if(asserts.length) {
 			for(var i = 0; i < asserts.length; i++) {
 				var a = asserts[i];
 				if(a.check) {
-					results = this.fail(test, a.failureMsg);
-					break;
+					results[i] = this.fail(test, a.failureMsg, a.title);
+					unitStatus = results[i].status;
+				} else {
+					results[i] = this.pass(test, a.title);
 				}
-			}
-			if(!results) {
-				results = this.pass(test);
 			}
 		} else {
 			results = this.warn(test);
+			unitStatus = results.status;
 		}
 		
-		var resEl = new Element('div', { 'class' : 'unit-test '+results.status, text: results.msg });
-		this.testBox.grab(resEl);
+		var unitEl = new Element('div', { 'class' : 'unit-test closed '+unitStatus, text: this._currentTestKey });
+		$splat(results).each(function(result, i) {
+			var testEl = new Element('div', { 'class' : 'test '+result.status, text: result.msg });
+			unitEl.grab(testEl);
+		});
+		this.testCaseBox.grab(unitEl);
 	}.protect(),
 	
 	assert: function(check, failureMsg, title) {
@@ -173,33 +155,37 @@ this.TestCase = new Class({
 		//if(check) throw new AssertionError(failureMsg);
 	}.protect(),
 	
-	assertEqual: function(val1, val2) {
-		this.assert(val1 != val2, "Actual: " +val1+' , Expected: '+val2);
+	assertEqual: function(val1, val2, title) {
+		this.assert(val1 != val2, "Actual: " +val1+' , Expected: '+val2, title);
 	},
 	
-	assertIdentity: function(val1, val2) {
-		this.assert(val1 !== val2, "Actual: " +val1+' , Expected: '+val2);
+	assertIdentity: function(val1, val2, title) {
+		this.assert(val1 !== val2, "Actual: " +val1+' , Expected: '+val2, title);
 	},
 	
-	assertTrue: function(val) {
-		this.assert(!val, val+' is not True');
+	assertTrue: function(val, title) {
+		this.assert(!val, val+' is not True', title);
 	},
 	
-	assertFalse: function(val) {
-		this.assert(val, val+' is not False');
+	assertFalse: function(val, title) {
+		this.assert(val, val+' is not False', title);
 	},
 	
-	assertNull: function(val) {
-		this.assert(typeof val != 'undefined'&& val !== null, val+' is not null');
+	assertNull: function(val, title) {
+		this.assert(typeof val != 'undefined'&& val !== null, val+' is not null', title);
 	}
 	
 });
-})();
 
 window.addEvent('domready', function() {
-	$(document.body).addEvent('click:relay(#TestBox .title)', function(e) {
-		var title = $(e.target);
-		var testCase = title.getParent('.test-case');
-		testCase.toggleClass('closed');
+	$(document.body).addEvents({
+		'click:relay(#TestBox .title)': function(e) {
+			var title = $(e.target);
+			var testCase = title.getParent('.test-case');
+			testCase.toggleClass('closed');
+		},
+		'click:relay(#TestBox .unit-test)': function(e) {
+			$(e.target).toggleClass('closed');
+		}
 	});
 });

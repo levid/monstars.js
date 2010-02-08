@@ -3,9 +3,9 @@ var ModelAjaxTest = new TestCase({
 		var that = this;
 		this.wait();
 		Test.findAll(function(models) {
-			
-			that.assertTrue(models, 'should instantiate all found results');
 			that.resume();
+			that.assertTrue(models instanceof Array, 'should give an array to callback');
+			that.assertTrue(models[0] instanceof Test, 'each item in array should be an instance of model');
 		});
 	}
 }, {

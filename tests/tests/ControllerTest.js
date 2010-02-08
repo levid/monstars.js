@@ -1,7 +1,7 @@
 var ControllerTest = new TestCase({
-	test_init: function() {
+	'instantiation': function() {
 		var tc = new this.TestController();
-		this.assertTrue($('Test'));
+		this.assertTrue($('Test'), 'should create an element from controller name');
 	},
 	test_events: function() {
 		
