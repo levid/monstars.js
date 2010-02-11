@@ -85,7 +85,7 @@ var init = (function() {
 					try {
 						Browser.loaded = true;						
 					} catch(e) {
-						setTimeout(arguments.callee, 0);
+						setTimeout(arguments.callee, 13);
 					}
 					if(window.Browser && Browser.loaded) {
 						window.fireEvent('domready');
@@ -123,7 +123,7 @@ var init = (function() {
 						// http://javascript.nwbox.com/IEContentLoaded/
 						document.documentElement.doScroll("left");
 					} catch( error ) {
-						setTimeout( arguments.callee, 0 );
+						setTimeout( arguments.callee, 13 );
 						return;
 					}
 		
