@@ -2,6 +2,7 @@
 	Model.Ajax - Ajax Model class for Web Server Storage
 	Dependencies: mootools-core/Request.JSON
 */
+(function() {
 Model.Ajax = new Class({
    
     Extends: Model,
@@ -69,6 +70,31 @@ Model.Ajax = new Class({
     
 });
 
+var _request = function(url, callback) {
+	var that = this;
+	if(this.prototype.useFixtures) {
+		var uri = init.app_dir() + 'tests/fixtures/'+GetClass.get(this).toLowerCase()+'s.json';
+	} else {
+		var STATIC = window[GetClass.get(this)].$urls || {},
+			root = STATIC.root || '/',
+			controller_name = STATIC.controller_name || GetClass.get(this).toLowerCase() + 's',
+			method = (STATIC['find'] && STATIC['find'].substitute(this.data)) || 'find',
+			uri = root + controller_name + '/' + method;
+	}
+	var request = new Request.JSON({
+		url: uri,
+		method: 'get',
+		onSuccess: function(response) {
+			if($type(callback) == 'function') {
+				callback(response);
+			}
+		},
+		onFailure: function(e) {
+			console.error(e);
+		}
+	});//.send(conditions && Hash.toQueryString(conditions));
+};
+
 Model.Ajax.get = function(type, options, callback) {
     options = options || { id: options };
     
@@ -111,3 +137,5 @@ Model.Ajax.findAll = function(callback) {
 Request.implement('isSuccess', function() {
 	return (this.status >= 200 && this.status < 300) || (this.status == 0 && this.xhr.responseText != '');
 });
+
+})();

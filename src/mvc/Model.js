@@ -63,21 +63,24 @@ Model.findAll = function() {
     throw { message: GetClass.get(this) + ' has not implemented findAll'};
 };
 
-Element.implement('model', function() {
-	var places_to_check = '',
-		id = this.get('id');
-	if(id) {
-		places_to_check += id + ' ';
-	}
-	places_to_check += this.className;
-	
-	var reg = RegExp('([a-zA-Z_]+?)_([^\\s]+)', 'g'),
-		match;
-		
-	while(match = reg.exec(places_to_check)) {
-		var klass = window[match[1].replace('_', '.')];
-		if(klass) {
-			return klass;
+Element.Properties.model = {
+	'get': function() {
+		var places_to_check = '',
+			id = this.get('id');
+		if(id) {
+			places_to_check += id + ' ';
 		}
-	}	
-});
+		places_to_check += this.className;
+		
+		var reg = RegExp('([a-zA-Z_]+?)_([^\\s]+)', 'g'),
+			match;
+			
+		while(match = reg.exec(places_to_check)) {
+			var klass = window[match[1].replace('_', '.')];
+			if(klass) {
+				return klass;
+			}
+		}
+		return null;
+	}
+};

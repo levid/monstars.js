@@ -1,6 +1,7 @@
 /*
 	Model.Fields - Field types for the $data in Models.
-	Dependencies: mvc/Model.js
+	requires: mvc/Model
+	provides: Model.Fields
 */
 Model.Fields = {
 	
@@ -20,6 +21,10 @@ Model.Fields = {
 		
 		screen: function(value) {
 			return value instanceof this.options.type ? value : new this.options.type(value);
+		},
+		
+		validate: function(value) {
+			
 		}
 		
 	}),
@@ -33,6 +38,14 @@ Model.Fields = {
 	},
 	
 	AutoField: function(options) {
+		return this.NumberField(options);
+	},
+	
+	DateField: function(options) {
+		return new this.Field(Date, options);
+	},
+	
+	ForeignKey: function(options) {
 		return this.NumberField(options);
 	}
 	

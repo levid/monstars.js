@@ -1,14 +1,23 @@
-var Controller = new Class({
+(function() {
+
+var _instances = {};
+
+this.Controller = new Class({
     
     Implements: [Events, GetClass],
 	
 	element: null,
     
     initialize: function() {
+		var instance = _instances[this._controller_prefix()]
+		if(instance) {
+			return instance;
+		}
 		var el = this.element || this._controller_prefix();
 		if(el == 'Document') el = document.body;
 		this.element = $(el) || new Element('div', { id: el}).inject(document.body); // or throw Error?
 		this.bindEvents();
+		return _instances[this._controller_prefix()] = this;
     },
 	
 	bindEvents: function() {
@@ -42,3 +51,5 @@ var Controller = new Class({
 	}
     
 });
+
+})();
