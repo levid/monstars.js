@@ -1,14 +1,7 @@
 /*
 	View. - Representation of data from Models. Parses a template file, and renders.
-*/
-(function() {
-	
-//caches processed View Template functions, so we only regex and eval once.
-var viewFuncs = {};
-
-/*%pre-compiled%*/
-
-this.View = new Class({
+*/	
+var View = new Class({
     
     Implements: [Events],
 	
@@ -17,7 +10,7 @@ this.View = new Class({
 	output: null,
     
     initialize: function(view) {
-		this.template = viewFuncs[view] || (viewFuncs[view] = this.process(init.view(view)));
+		this.template = View.$cache[view] || (View.$cache[view] = this.process(init.view(view)));
     },
 	
 	//if passed a function, we assume the function is a pre-compiled template.
@@ -54,7 +47,8 @@ this.View = new Class({
     
 });
 
-})();
+//caches processed View Template functions, so we only regex and eval once.
+View.$cache = {};
 
 View.Helpers = {
 	

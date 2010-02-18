@@ -38,9 +38,9 @@ GetClass.get = (function() {
 		var win = new Hash({});
 		for(var key in window) {
 			if(ignore.indexOf(key) !== -1) continue;			
-			win.set(key, window[key]);
+			if(window[key] == obj) return key
 		}
-		return win.keyOf(obj);
+		return null;
 	} : function(obj) {
 		return $H(window).keyOf(obj); //findKey(obj);
 	}

@@ -4,6 +4,10 @@ if(!configFile) {
 	quit();
 }
 
+load('bin/mootools-1.2.4-core-server.js');
+//load src/mvc/View so we can compile templates
+load('src/mvc/View.js');
+
 var init = (function() {
 	
 	function File(path) {
@@ -42,8 +46,12 @@ var init = (function() {
 	
 	var include = function(path) {
 		//include
-		src += readFile(path) + "\n";
-	}
+		writeSrc(readFile(path));
+	};
+	
+	var writeSrc = function(text) {
+		src += text + "\n"
+	};
 	
 	var includeArgs = function(func) {
 		return args(function(arg) {
@@ -86,12 +94,22 @@ var init = (function() {
 		models: includeArgs(function(p) { return app_dir + 'models/'+p+'.js' }),
 		controllers: includeArgs(function(p) { return app_dir + 'controllers/'+p+'Controller.js' }),
 		view: function(p) {
-			//var viewSrc = readFile(app_dir + 'views/'+p+'.html');
+			print('getting: ' + p);
+			return readFile(app_dir + 'views/'+p+'.html');			
+		},
+		views: args(function(p) {
 			//TODO -
 			//process viewSrc into new Function()
 			//write new Function().toString() to src.
-		},
-		views: args(init.view)
+			print('init.view('+p+')');
+			var v = new View(p);
+			print(v);
+			view = {
+				'path': p,
+				'function': v.template.toString()
+			};
+			writeSrc("View.$cache['{path}'] = {function}; \n".substitute(view));
+		})
 	}
 	return pub;
 })();

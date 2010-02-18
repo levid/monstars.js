@@ -94,7 +94,7 @@ var TestCase = new Class({
 		delay = delay || 10000;
 		this._waitTimeout = (function() {
 			this.resume();
-			this.fail(this._currentTest, 'Async Test timed out');
+			this.assertTrue(false, 'Async Test timed out');
 		}).delay(delay, this);
 		this.fireEvent('wait', this._currentTestKey);
 	},
