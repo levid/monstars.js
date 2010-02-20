@@ -17,7 +17,7 @@ var ModelTest = new TestCase({
 		m.set({title: 'DifferentTitle'});
 		this.assertEqual(m.get('title'), 'DifferentTitle','can use set with object of key/value pairs');
 	},
-	test_fields: function() {
+	'Model.Fields': function() {
 		var FieldModel = new Class({
 			Extends: Model,
 			fields: {
@@ -25,6 +25,8 @@ var ModelTest = new TestCase({
 				title: Model.Fields.TextField()
 			}
 		});
+		//maybe this should be its own TestCase
+		//they could get rather complex
 	},
 	'identity': function() {
 		var m = new TestModel({ id:13 });
@@ -49,6 +51,6 @@ var ModelTest = new TestCase({
 		});
 	},
 	onTeardown: function() {
-		delete window.TestModel;
+		//delete window.TestModel;
 	}
 });

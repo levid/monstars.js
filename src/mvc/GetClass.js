@@ -33,12 +33,12 @@ var GetClass = new Class({
 });
 
 GetClass.get = (function() {
-	var ignore = ['sessionStorage'];
 	return Browser.Engine.gecko ? function(obj) {
 		var win = new Hash({});
 		for(var key in window) {
-			if(ignore.indexOf(key) !== -1) continue;			
-			if(window[key] == obj) return key
+			try {			
+				if(window[key] == obj) return key
+			} catch(e) { /*sessionStore*/ }
 		}
 		return null;
 	} : function(obj) {

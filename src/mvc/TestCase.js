@@ -67,7 +67,7 @@ var TestCase = new Class({
 	},
 	
 	execute: function() {
-		if(this._waitTimeout) return;
+		if(this._waitTimeout || !this._queue.length) return;
 		var fn = this._queue.shift();
 		fn.apply(this);
 		this.fireEvent('execute', fn);
@@ -92,6 +92,7 @@ var TestCase = new Class({
 	
 	wait: function(delay) {
 		delay = delay || 10000;
+		$clear(this._resumeTimeout);
 		this._waitTimeout = (function() {
 			this.resume();
 			this.assertTrue(false, 'Async Test timed out');
@@ -102,7 +103,7 @@ var TestCase = new Class({
 	resume: function() {
 		this.fireEvent('resume', this._currentTestKey);
 		this._waitTimeout = $clear(this._waitTimeout);
-		this.execute.delay(1, this);
+		this._resumeTimeout = this.execute.delay(13, this);
 	},
 	
 	pass: function(test, title) {
@@ -155,8 +156,8 @@ var TestCase = new Class({
 		//if(check) throw new AssertionError(failureMsg);
 	}.protect(),
 	
-	assertEqual: function(val1, val2, title) {
-		this.assert(val1 != val2, "Actual: " +val1+' , Expected: '+val2, title);
+	assertEqual: function(actual, expected, title) {
+		this.assert(actual != expected, "Actual: " +actual+' , Expected: '+expected, title);
 	},
 	
 	assertIdentity: function(val1, val2, title) {
