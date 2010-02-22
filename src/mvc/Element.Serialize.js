@@ -1,5 +1,5 @@
 Element.implement('serialize', function() {
-	var values = new Hash();
+	var values = new Hash({});
 	this.getElements("input, select, textarea",true).each(function(el){
 		if(!el.name || el.disabled || el.type=="submit" || el.type=="reset" || el.type=="file") return;
 		var n = (el.get('tag') == 'select') ?

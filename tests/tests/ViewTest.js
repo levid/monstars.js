@@ -11,12 +11,14 @@ var ViewTest = new TestCase({
 		
 		var html = view.render({ echo: echo_test });
 		this.assertTrue(html, 'should return a value');
+		this.assertEqual(view, html, 'should return the instance');
+		html = html.output;
 		
 		var el = new Element('div', { html: html }).getFirst();
 		this.assertTrue(el.hasClass('simple'), 'the element should have the class from the template file');
 		this.assertEqual(el.get('text').trim(), echo_test, 'the values passed to render should be used in the template');
 	},
-	'toElement': function() {
+	'to Element': function() {
 		var view = new View('simple');
 		var echo_test = 'test view';
 		view.render({ echo: echo_test });
@@ -27,12 +29,11 @@ var ViewTest = new TestCase({
 		this.assertTrue(el.getElement('.simple'), 'view instance can be used in element methods like grab, replaces, etc');
 		
 	},
-	'toString': function() {
+	'to String': function() {
 		var view = new View('simple');
 		var echo_test = 'test view';
 		var res = view.render({ echo: echo_test });
-		
-		this.assertEqual(view + '', res, 'render by default will return the String version of the template');
+
 		var el = new Element('div', { html: view });
 		this.assertTrue(el.getElement('.simple'), 'text version should use html from template file');
 		this.assertEqual(el.get('text').trim(), echo_test, 'should use values passed to render');

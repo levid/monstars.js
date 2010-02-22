@@ -19,7 +19,6 @@ Model.Browser = new Class({
     save: function(callback) {
         var modelStore = this.getTable();
 		if(!this.$data.id) {
-			//TODO - generate an ID
 			var ids = Hash.getKeys(modelStore);
 			if(ids.length) {
 				ids.sort(function(a, b) {

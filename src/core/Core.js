@@ -44,6 +44,8 @@ Class.Mutators.Extends = function (parent){
 	on your class with the same name.
 	
 	Specifically, toString was gotcha'ing me.
+	
+	--Except, IE will never let me use this in a for..in block. Gaaaah!
 */
 ['toString', 'toLocaleString', 'valueOf', 'toSource', 'watch', 'unwatch', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable'].each(function(method){
 	Class.Mutators[method] = $arguments(0);
