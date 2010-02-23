@@ -34,6 +34,17 @@ var ModelTest = new TestCase({
 		el.addClass(m.identity());
 		this.assertTrue(el.hasClass('TestModel_13'), 'should return Class + underscore + id');
 	},
+	'Model.wrap': function() {
+		var one = { id: 1, title: 'hey' },
+			two = { id: 2, title: 'yo' };
+		var model = TestModel.wrap(one),
+			models = TestModel.wrap([one, two]);
+			
+		this.assertEqual($type(model), 'array', 'should always return an array');
+		this.assertTrue(model[0] instanceof TestModel, 'should contain instances of the Model');
+		this.assertEqual(models[1].get('title'), two.title, 'should have properties set of Model');
+		
+	},
 	'el.get(\'model\')': function() {
 		var m = new TestModel({ id:13 });
 		TestModel.$cache = {};
