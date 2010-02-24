@@ -77,7 +77,7 @@ Model.Browser.find = function(conditions, options, callback) {
 		var matches = true;
 		for(var k in conditions) {
 			if(conditions.hasOwnProperty(k)) {
-				if(model.$data && model.$data[k] != conditions[k]) {
+				if(model[k] != conditions[k]) {
 					matches = false;
 					break;
 				}
