@@ -1,8 +1,5 @@
 (function() {
 
-var sessionInstance,
-	localInstance;
-
 var sessionStorage;
 try {
 	sessionStorage = this.sessionStorage
@@ -27,6 +24,7 @@ sessionStorage = sessionStorage || (function() {
 		},
 		removeItem: function (key) {
 			delete data[key];
+			//todo - remove from keys[]
 			window.top.name = JSON.encode(data);
 			this.length--;
 		},
@@ -67,24 +65,87 @@ var localStorage = this.localStorage || (function() {
 	}
 })();
 
+var userData = Browser.Engine.trident && (function() {
+	var driver = new Element('span'),
+		PATH = 'mvc_storage_data',
+		NAME = 'data',
+		data = {},
+		keys = [];
+		
+	driver.addBehavior('#default#userData');
+	
+	window.addEvent('domready', function() {
+		driver.inject(document.body);
+		driver.load(PATH);
+		try {
+			data = JSON.decode(driver.getAttribute(NAME)) || {};
+		} catch(ex) {
+			data = {};
+		}
+	});
+	
+	var _save = function() {
+		try {
+			driver.setAttribute(NAME, JSON.encode(data));
+			driver.save(PATH);
+		} catch(ex) {
+			//storage full error
+		}
+	}
+	
+	return {
+		setItem: function(key, value) {
+			if(!$defined(data[key])) {
+				this.length++;
+				keys.push(key);
+			}
+			data[key] = value;
+			_save();
+		},
+		removeItem: function(key) {
+			delete data[key];
+			this.length--;
+			_save();
+		},
+		getItem: function(key) {
+			return data[key];
+		},
+		key: function(index) {
+			return keys[index];
+		},
+		clear: function() {
+			data = {};
+			this.length = 0;
+			keys = [];
+			_save();
+		}
+	}
+})();
+
+
+var instances = {};
 
 this.Storage = new Class({
 	
 	initialize: function(type) {
 		type = type || 'local';
+		if(Browser.Engine.trident/* && Browser.Engine.version <= 5*/) {
+			type = 'userData';
+		}
 		switch(type) {
-			case 'local':
-				this.store = localStorage;
-				this.length = this.store.length;
-				return localInstance ? localInstance : localInstance = this;
+			case 'userData':
+				this.store = userData;
+				break;
 			case 'session':
 				this.store = sessionStorage;
-				this.length = this.store.length;
-				return sessionInstance ? sessionInstance : sessionInstance = this;
+				break;
+			case 'local':
+				//falls through
 			default:
+				this.store = localStorage;
 				break;
 		}
-		return this;
+		return instances[type] ? instances[type] : instances[type] = this;
 	},
 	
 	getItem: function(key) {
@@ -94,13 +155,11 @@ this.Storage = new Class({
 	setItem: function(key, value) {
 		if(key == 'key') throw new Error('Key cannot be "key"');
 		this.store.setItem(key, JSON.encode(value));
-		this.length = this.store.length;
 		return this;
 	},
 	
 	removeItem: function(key) {
 		this.store.removeItem(key);
-		this.length = this.store.length;
 		return this;
 	},
 	
@@ -110,8 +169,11 @@ this.Storage = new Class({
 	
 	clear: function() {
 		this.store.clear();
-		this.length = this.store.length;
 		return this;
+	},
+	
+	length: function() {
+		return this.store.length;
 	}
 	
 });

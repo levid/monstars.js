@@ -30,7 +30,7 @@ Model.Browser = new Class({
 				this.$data.id = 1;
 			}			
 		}
-		modelStore[this.$data.id] = this;
+		modelStore[this.$data.id] = this.$data;
 		Store.setItem(this.tableize(), modelStore);
 		callback(this);
         return this;
@@ -60,7 +60,7 @@ var get_table = function() {
 
 Model.Browser.get = function(id, callback) {
 	var models = get_table.call(this);
-	callback(models[id] && new this(models[id].$data));
+	callback(models[id] && new this(models[id]));
 	return this;
 };
 
@@ -77,14 +77,14 @@ Model.Browser.find = function(conditions, options, callback) {
 		var matches = true;
 		for(var k in conditions) {
 			if(conditions.hasOwnProperty(k)) {
-				if(model.$data[k] != conditions[k]) {
+				if(model.$data && model.$data[k] != conditions[k]) {
 					matches = false;
 					break;
 				}
 			}
 		}
 		if(matches) {
-			match.push(new this(model.$data));
+			match.push(new this(model));
 		}
 	}, this);
 	//order by, limit

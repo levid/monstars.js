@@ -83,7 +83,7 @@ var TestCase = new Class({
 			
 			test.apply(this);		
 		} catch(e) {
-			this.assertTrue(false, e);
+			this.assertTrue(false, (e.message || e));
 			if(this._waitTimeout) {
 				this.resume();
 			}			

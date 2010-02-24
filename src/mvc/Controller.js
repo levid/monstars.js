@@ -38,6 +38,10 @@ this.Controller = new Class({
 	
 	view: function(view_name, data) {
 		try {
+			if(!data && $type(view_name) != 'string') {
+				data = view_name;
+				view_name = null;
+			}
 			view_name = view_name || this._controller_prefix().toLowerCase() + '/' + arguments.callee.caller.caller.caller._name;
 		} catch(e) {
 			throw new Error('View name was not specified, and could not determine from controller action.');

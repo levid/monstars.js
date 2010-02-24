@@ -40,7 +40,7 @@ var ModelBrowserTest = new TestCase({
 		var that = this;
 		this.wait(1000);
 		BrowserTestModel.get(1, function(m) {
-			that.assertTrue(m, 'doesn\'t work on non-models')
+			that.assertTrue(m, 'needs a model instance to work')
 			m.destroy(function() {
 				BrowserTestModel.get(1, function(m2) {
 					that.resume();

@@ -266,8 +266,31 @@ var init = (function() {
 			return this;
 		};
 	};
+	
+	var extend = function(parent, child) {
+		for(var i in child) {
+			if(child.hasOwnProperty(i)) {
+				parent[i] = child[i];
+			}
+		}
+	};
+	
+	if(!Array.prototype.indexOf) {
+		Array.prototype.indexOf = function(value) {
+			for(var i = 0, len = this.length; i < len; i++) {
+				if(this[i] === value) {
+					return i;
+				}
+			}
+			return -1;
+		};
+	}
+	
+	var pub = function init() {
+		return pub.queue(arguments, priv.APP_DIR);
+	};
 
-	var pub = {
+	extend(pub, {
 		
 		app_dir: function() {
 			return priv.APP_DIR;
@@ -358,7 +381,7 @@ var init = (function() {
 			});
 			return pub;
 		}
-	};
+	});
 
 
 	priv.start();
