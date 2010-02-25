@@ -25,7 +25,7 @@ Model.Browser = new Class({
 				ids.sort(function(a, b) {
 					return a < b ? 1 : a > b ? -1 : 0;
 				});
-				this.$data.id = ids[0] + 1; //should be highest used ID + 1
+				this.$data.id = parseInt(ids[0], 10) + 1; //should be highest used ID + 1
 			} else {
 				this.$data.id = 1;
 			}			
