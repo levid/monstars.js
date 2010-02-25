@@ -45,22 +45,34 @@ sessionStorage = sessionStorage || (function() {
 
 var localStorage = this.localStorage || (function() {
 	//use Cookies
-	var data = new Cookie();
+	var store = new Cookie('store'),
+		data = JSON.decode(store.read()),
+		keys = [];
 	return {
 		setItem: function(key, value) {
-			
+			if(!$defined(data[key])) {
+				this.length++;
+				keys.push(key);
+			}
+			data[key] = value;
+			store.write(JSON.encode(data));
 		},
 		removeItem: function(key) {
-			
+			delete data[key];
+			this.length--;
+			store.write(JSON.encode(data));
 		},
 		getItem: function(key) {
-			
+			return data[key] || null;
 		},
 		key: function(index) {
-			
+			return keys[index];
 		},
 		clear: function() {
-			
+			data = {};
+			keys = [];
+			store.dispose();
+			this.length = 0;
 		}
 	}
 })();
