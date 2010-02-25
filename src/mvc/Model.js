@@ -29,6 +29,8 @@ var Model = new Class({
 		for(var key in this.fields) {
 			if(obj.hasOwnProperty(key) && obj[key]) {
 				this.$data[key] = this.fields[key].screen($unlink(obj[key]));
+			} else {
+				this.$data[key] = this.fields[key].get('default');
 			}
 		}
 	},

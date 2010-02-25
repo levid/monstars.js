@@ -10,7 +10,8 @@ Model.Fields = {
 		Implements: Options,
 		
 		options: {
-			type: String
+			type: String,
+			'default': null
 		},
 		
 		initialize: function(type, options) {
@@ -25,6 +26,10 @@ Model.Fields = {
 		
 		validate: function(value) {
 			
+		},
+		
+		get: function(key) {
+			return this.options[key];
 		}
 		
 	}),
@@ -39,6 +44,10 @@ Model.Fields = {
 	
 	AutoField: function(options) {
 		return this.NumberField(options);
+	},
+	
+	BooleanField: function(options) {
+		return new this.Field(Boolean, options);
 	},
 	
 	DateField: function(options) {
