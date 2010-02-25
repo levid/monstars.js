@@ -55,7 +55,7 @@ Model.Browser = new Class({
 });
 
 var get_table = function() {
-	return Store.getItem(GetClass.get(this).toLowerCase()+'s');
+	return Store.getItem(GetClass.get(this).toLowerCase()+'s') || {};
 };
 
 Model.Browser.get = function(id, callback) {
