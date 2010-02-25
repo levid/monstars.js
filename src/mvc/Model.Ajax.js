@@ -8,7 +8,7 @@ Model.Ajax = new Class({
     Extends: Model,
     
     save: function(callback) {
-        this.data.id ?
+        this.$data.id ?
             this._update(callback) :
             this._insert(callback);
         
@@ -116,11 +116,7 @@ Model.Ajax.find = function(conditions, options, callback) {
 		method: 'get',
 		onSuccess: function(response) {
 			if($type(callback) == 'function') {
-				var models = [];
-				$splat(response).each(function(m) {
-					models.push(new that(m));
-				});
-				callback(models);
+				callback(that.wrap(response));
 			}
 		},
 		onFailure: function(e) {

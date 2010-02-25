@@ -51,6 +51,19 @@ var Model = new Class({
     
 });
 
+Model.wrap = function(models) {
+	var instances = [],
+		that = this;
+	var cache = this.$cache || (this.$cache = {});
+	
+	$splat(models).each(function(m) {
+		var inst = new that(m.$data || m);
+		that.$cache[inst.get('id')] = inst;
+		instances.push(inst);
+	});
+	return instances;
+}
+
 Model.get = function() {
 	throw { message: GetClass.get(this) + ' has not implemented get'};
 }
@@ -78,7 +91,7 @@ Element.Properties.model = {
 		while(match = reg.exec(places_to_check)) {
 			var klass = window[match[1].replace('_', '.')];
 			if(klass) {
-				return klass;
+				return klass.$cache && klass.$cache[match[2]];
 			}
 		}
 		return null;

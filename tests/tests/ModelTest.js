@@ -36,6 +36,8 @@ var ModelTest = new TestCase({
 	},
 	'el.get(\'model\')': function() {
 		var m = new TestModel({ id:13 });
+		TestModel.$cache = {};
+		TestModel.$cache[13] = m;
 		var el = new Element('div');
 		el.addClass(m.identity());
 		this.assertEqual(el.get('model'), m, 'should return the model instance');

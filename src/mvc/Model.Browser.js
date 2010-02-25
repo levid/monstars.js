@@ -60,7 +60,7 @@ var get_table = function() {
 
 Model.Browser.get = function(id, callback) {
 	var models = get_table.call(this);
-	callback(models[id] && new this(models[id]));
+	callback(models[id] && this.wrap(models[id])[0]);//new this(models[id])
 	return this;
 };
 
@@ -84,7 +84,7 @@ Model.Browser.find = function(conditions, options, callback) {
 			}
 		}
 		if(matches) {
-			match.push(new this(model));
+			match.push(model);//new this(model)
 		}
 	}, this);
 	//order by, limit
@@ -92,7 +92,7 @@ Model.Browser.find = function(conditions, options, callback) {
 		match = match.length > options.limit ? match.slice(0, options.limit + 1) : match;
 	}
 	//callback
-	callback(match);
+	callback(this.wrap(match));
 	return this;
 };
 
