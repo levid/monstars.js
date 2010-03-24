@@ -28,6 +28,9 @@ var ViewTest = new TestCase({
 		el.grab(view);
 		this.assertTrue(el.getElement('.simple'), 'view instance can be used in element methods like grab, replaces, etc');
 		
+		el.grab(view);
+		this.assertEqual(el.getElements('.simple').length, 2, 'should return a new element each time.');
+		
 	},
 	'to String': function() {
 		var view = new View('simple');
