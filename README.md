@@ -30,7 +30,7 @@ Views are HTML written in ASP-like sytnax, that allows the execution of Javascri
 		</ul>
 
 
-Controllers handle all View events to make changes to the Model, and then re-render the view. Controllers either specify an element, or use the name of the Controller to own an element. The controller then observes events delegated from within this container. All HTML inside the container should be a View.
+Controllers handle all View events to make changes to the Model, and then re-render the view. Controllers either specify an element, or use the name of the Controller to own an element. The controller then observes events delegated from within this container.
 
 		var RecipesController = new Class({
 				list: function(recipes) {
