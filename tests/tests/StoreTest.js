@@ -20,22 +20,22 @@ var testStorageAPI = function(store) {
 	this.assertFalse($chk(store.getItem('test')), 'all key/value pairs should be gone after clear()');
 };
 
-this.StorageTest = new TestCase({
+this.StoreTest = new TestCase({
 	'singleton': function() {
-		var store1 = new Storage();
-		var store2 = new Storage();
+		var store1 = new Store();
+		var store2 = new Store();
 		this.assertEqual(store1, store2, 'constructor should always return the same instance');
 	},
 	'local store': function() {
-		var store = new Storage('local');
+		var store = new Store('local');
 		testStorageAPI.call(this, store);
 	},
 	'session store': function() {
-		var store = new Storage('session');
+		var store = new Store('session');
 		testStorageAPI.call(this, store);
 	},
 	'storing objects': function() {
-		var store = new Storage('local'),
+		var store = new Store('local'),
 			value = { a: 'one', 2: 'b', 'three': [1,2,4] };
 			
 		store.setItem('test', value);
