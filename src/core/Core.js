@@ -3,7 +3,7 @@
 */
 var Core = {
 	
-	version: '0.5.1',
+	version: '0.5.2',
 	
 	$controllers: [],
 	
@@ -46,6 +46,9 @@ Class.Mutators.Extends = function (parent){
 	Specifically, toString was gotcha'ing me.
 	
 	--Except, IE will never let me use this in a for..in block. Gaaaah!
+
+	--Can remove as soon as MooTools 1.3 is stable enough, because it provides a fix
+		in Class.js
 */
 ['toString', 'toLocaleString', 'valueOf', 'toSource', 'watch', 'unwatch', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable'].each(function(method){
 	Class.Mutators[method] = $arguments(0);

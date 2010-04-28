@@ -1,11 +1,11 @@
 /*
-	Model.Browser - Model to store data in the browser, using localStorage,
+	Model.Browser - Model to $store data in the browser, using localStorage,
 	sessionStorage, and Cookies.
-	requires: mvc/GetClass, mvc/Model, mvc/Storage
+	requires: mvc/GetClass, mvc/Model, mvc/Store
 */
 (function() {
 
-var Store = new Storage();
+var $store = new Store();
 
 Model.Browser = new Class({
    
@@ -30,7 +30,7 @@ Model.Browser = new Class({
 			}			
 		}
 		modelStore[this.$data.id] = this.$data;
-		Store.setItem(this.tableize(), modelStore);
+		$store.setItem(this.tableize(), modelStore);
 		callback(this);
         return this;
     },
@@ -38,13 +38,13 @@ Model.Browser = new Class({
     destroy: function(callback) {
 		var modelStore = this.getTable();
 		delete modelStore[this.$data.id];
-		Store.setItem(this.tableize(), modelStore);
+		$store.setItem(this.tableize(), modelStore);
 		callback(this);
         return this;
     },
 	
 	getTable: function() {
-		return Store.getItem(this.tableize()) || {};
+		return $store.getItem(this.tableize()) || {};
 	}.protect(),
     
     tableize: function() {
@@ -54,7 +54,7 @@ Model.Browser = new Class({
 });
 
 var get_table = function() {
-	return Store.getItem(GetClass.get(this).toLowerCase()+'s') || {};
+	return $store.getItem(GetClass.get(this).toLowerCase()+'s') || {};
 };
 
 Model.Browser.get = function(id, callback) {

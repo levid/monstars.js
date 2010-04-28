@@ -18,6 +18,8 @@ var init = (function() {
 		
 		env: {},
 		
+		now: new Date(),
+		
 		use_preload: (function() {
 			var is_opera = window.opera && Object.prototype.toString.call(window.opera) == "[object Opera]",
 				is_gecko =  (function(o) { o[o] = o+""; return o[o] != o+""; })(new String("__count__"));
@@ -301,7 +303,11 @@ var init = (function() {
 			if(path.substring(path.length-1) != '/')  path += '/';
 			for(var i = 0; i < files.length; i++) {
 				if(typeof files[i] == 'string') {
-					var S = new Script(path + files[i].replace(/\.js$/,'') + '.js')
+					var filename = path + files[i].replace(/\.js$/,'') + '.js';
+					if(priv.env.test) {
+						filename += '?' + priv.now.getTime();
+					}
+					var S = new Script(filename);
 					if (priv.use_preload()) {
 						S.load(priv.execute_next);
 						priv.QUEUE.push(S);
@@ -318,6 +324,9 @@ var init = (function() {
 		},
 		core: function() {
 			var core_files = ['mootools-1.2.4-core','mootools-1.2.4.2-more'];
+			//1.3b doesn't support Event Delegation, which Controllers use extensively
+			//so must wait to use 1.3
+			//var core_files = ['mootools-1.3b1.1-core','mootools-1.2.4.2-more']; 
 			if(priv.env.test) {
 				core_files = (core_files.join('-nc|')+'-nc').split('|');
 			}
