@@ -28,6 +28,35 @@ var ModelTest = new TestCase({
 		//maybe this should be its own TestCase
 		//they could get rather complex
 	},
+	'Model.Fields.ForeignKey': function() {
+		var A = new Class({
+			Extends: Model.Browser,
+			fields: {
+				id: Model.Fields.AutoField(),
+				title: Model.Fields.TextField()
+			}
+		});
+		var B = new Class({
+			Extends: Model.Browser,
+			fields: {
+				id: Model.Fields.AutoField(),
+				title: Model.Fields.TextField(),
+				a: Model.Fields.ForeignKey(A)
+			}
+		});
+		
+		var a1 = new A({ id: 1, title: 'a1'});
+		var b1 = new B({ id:1, title: 'b1', a: 1 });
+		this.assertTrue(b1.get('a'), 'a value should have been stored');
+		this.assertTrue(b1.get('a') instanceof A, 'value should be an instance of A');
+		this.assertNotEqual(b1.get('a'), a1, 'should create new instance if instance isn\'t in cache');
+		
+		A.$cache = {};
+		A.$cache[a1.get('id')] = a1;
+		
+		this.assertEqual(b1.get('a'), a1, 'should be same instance if in cache');
+		
+	},
 	'identity': function() {
 		var m = new TestModel({ id:13 });
 		var el = new Element('div');
