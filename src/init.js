@@ -247,7 +247,7 @@ var init = (function() {
 		},
 		
 		dir: function() {
-			return this.fileName.replace(this.query(),'').replace(/[^\/]+$/, '');//(/[a-zA-Z0-9\-_]+\.js(.*)$/,'');
+			return this.fileName.replace('?'+this.query(),'').replace(/[^\/]+$/, '');//(/[a-zA-Z0-9\-_]+\.js(.*)$/,'');
 		},
 		
 		query: function() {
