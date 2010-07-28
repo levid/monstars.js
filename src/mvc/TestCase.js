@@ -160,6 +160,10 @@ var TestCase = new Class({
 		this.assert(actual != expected, "Actual: " +actual+' , Expected: '+expected, title);
 	},
 	
+	assertNotEqual: function(actual, expected, title) {
+		this.assert(actual == expected, "Actual: " +actual+' , Expected: '+expected, title);
+	},
+	
 	assertIdentity: function(val1, val2, title) {
 		this.assert(val1 !== val2, "Actual: " +val1+' , Expected: '+val2, title);
 	},

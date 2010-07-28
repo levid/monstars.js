@@ -354,7 +354,7 @@ var init = (function() {
 		view: function(view_name) {
 			var fileName = priv.APP_DIR + 'views/' + view_name.replace(/\.html$/,'') + priv.viewExt;
 			if(!priv.VIEWS[fileName]) {
-				priv.VIEWS[fileName] = priv.request(fileName);
+				priv.VIEWS[fileName] = priv.request(priv.env.test ? (fileName + '?' + priv.now.getTime()) : fileName);
 			}
 			return priv.VIEWS[fileName];
 		},

@@ -15,28 +15,18 @@ var Model = new Class({
     },
 
     set: function(prop, value) {
-		if(prop) {
-			if(typeof value !== 'undefined') {
-				var key = prop;
-				prop = {};
-				prop[key] = value;
-			}
-			this._set(prop);
+		if ($type(prop) == 'object'){
+			for (var p in prop) this.set(p, prop[p]);
+			return this;
 		}
-    },
-	
-	_set: function(obj) {
-		for(var key in this.fields) {
-			if(obj.hasOwnProperty(key) && obj[key]) {
-				this.$data[key] = this.fields[key].screen($unlink(obj[key]));
-			} else {
-				this.$data[key] = this.fields[key].get('default');
-			}
+		if(this.fields[prop]) {
+			this.$data[prop] = this.fields[prop].set($unlink(value));
 		}
+		return this;
 	},
     
     get: function(prop) {
-    	return this.$data[prop];
+    	return this.fields[prop] && this.fields[prop].get(this.$data[prop])
     },
 	
 	identity: function() {
