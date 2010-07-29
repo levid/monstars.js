@@ -39,7 +39,20 @@ var Model = new Class({
     
     destroy: function() {
         throw { message: this.get_class() + ' has not implemented destroy'};
-    }
+    },
+	
+	getWriteableData: function() {
+		var data = {};
+		for(var key in this.fields) {
+			if(this.fields.hasOwnProperty(key)) {
+				var field = this.fields[key];
+				if(field.options.write) {
+					data[key] = field.get(this.$data[key]);
+				}
+			}
+		}
+		return data;
+	}
     
 });
 

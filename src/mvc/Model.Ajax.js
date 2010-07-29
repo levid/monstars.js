@@ -53,17 +53,18 @@ Model.Ajax = new Class({
                 if($type(callback) == 'function')
                     callback(that);
             }
-        }).send(Hash.toQueryString(this.data));
+        }).send({ data: this.getWriteableData() });
     }.protect(),
     
     url: function(action) {
         if(this.useFixture) {
 			return init.app_dir() + 'tests/fixtures/'+this.get_class()+'s.js';
 		}
+		var that = this;
 		var STATIC = window[this.get_class()].$urls || {};
         var root = STATIC.root || '/';
         var controller_name = STATIC.controller_name || this.get_class().toLowerCase() + 's';
-        var method = (STATIC[action] && STATIC[action].substitute(this.data)) || action;
+        var method = (STATIC[action] && STATIC[action].replace(/\{([^\}]+)\}/g, function(match, group1) { return that.get(group1); })) || action;
         var uri = root + controller_name + '/' + method;
         return uri;
     }.protect()
@@ -91,6 +92,7 @@ var _request = function(url, callback) {
 		},
 		onFailure: function(e) {
 			console.error(e);
+			callback([]);
 		}
 	});//.send(conditions && Hash.toQueryString(conditions));
 };
@@ -121,7 +123,7 @@ Model.Ajax.find = function(conditions, options, callback) {
 		},
 		onFailure: function(e) {
 			console.error(e);
-			//throw e;
+			callback([]);
 		}
 	}).send(conditions && Hash.toQueryString(conditions));
 };

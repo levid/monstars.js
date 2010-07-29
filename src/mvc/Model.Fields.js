@@ -11,7 +11,9 @@ var Field = new Class({
 	
 	options: {
 		type: String,
-		'default': null
+		'default': null,
+		read: true,
+		write: true
 	},
 	
 	initialize: function(type, options) {
@@ -29,10 +31,29 @@ var Field = new Class({
 	},
 	
 	get: function(value) {
-		return value;
+		return value && value.valueOf();
 	}
 	
 });
+'2010-07-29T01:15:16.742000'
+var bigDateFormat = /(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?)?/
+var DateField = new Class({
+	
+	Extends: Field,
+	
+	set: function(value) {
+		var match;
+		if($type(value) == 'string' && (match = value.match(bigDateFormat))) {
+			value = new Date(match[1], parseInt(match[2], 10) - 1, parseInt(match[3], 10), parseInt(match[4] || 0, 10), parseInt(match[5] || 0, 10), parseInt(match[6] || 0, 10));
+		}
+		return this.parent(value);
+	},
+	
+	get: function(value) {
+		return value;
+	}
+	
+})
 
 Model.Fields = {
 	
@@ -54,8 +75,9 @@ Model.Fields = {
 		return new this.Field(Boolean, options);
 	},
 	
+	
 	DateField: function(options) {
-		return new this.Field(Date, options);
+		return new DateField(Date, options);
 	},
 	
 	_ForeignKey: new Class({
@@ -77,8 +99,12 @@ Model.Fields = {
 		
 	}),
 	
-	ForeignKey: function(options) {
-		return new this._ForeignKey(options);
+	ForeignKey: function(type, options) {
+		if(!options && type.type) {
+			options = type;
+			type = options.type;
+		}
+		return new this._ForeignKey(type, options);
 	}
 	
 };
