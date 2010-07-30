@@ -23,7 +23,7 @@ var Field = new Class({
 	},
 	
 	set: function(value) {
-		return value instanceof this.options.type ? value : new this.options.type(value);
+		return value && (value instanceof this.options.type ? value : new this.options.type(value));
 	},
 	
 	validate: function(value) {

@@ -16,6 +16,9 @@ var ModelTest = new TestCase({
 		
 		m.set({title: 'DifferentTitle'});
 		this.assertEqual(m.get('title'), 'DifferentTitle','can use set with object of key/value pairs');
+		
+		m.set('title', null);
+		this.assertNull(m.get('title'), 'assigning null to a value should store null, not an empty object of that Type');
 	},
 	'Model.Fields': function() {
 		var FieldModel = new Class({
