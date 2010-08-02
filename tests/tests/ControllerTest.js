@@ -17,8 +17,8 @@ var ControllerTest = new TestCase({
 		});
 	},
 	onTeardown: function() {
-		var el = $('Test');
+		/*var el = $('Test');
 		if(el)
-			el.dispose();
+			el.dispose();*/
 	}
 });
