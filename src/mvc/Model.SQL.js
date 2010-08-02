@@ -56,9 +56,9 @@ Model.SQL = new Class({
     
 });
 //TODO: consider how new models are supposed to integrate find
-Model.SQL.find = function(type, condition, options, callback) {
+Model.SQL.find = function(condition, options, callback) {
     var db = Database.get();
-	var table = GetClass.get(type).toLowerCase() + 's';
+	var table = GetClass.get(this).toLowerCase() + 's';
 	condition = condition || 1;
 	var q = db.SELECT(table, condition, options);
     console.log(q);
@@ -68,13 +68,12 @@ Model.SQL.find = function(type, condition, options, callback) {
 			throw 'Failed select on ' + table; 
 		},
 		'result':function(result) {			
-			for(var i = 0; i < result.data.length; i++) {
-				models.push(new type(result.data[i]));
-			}
+			
+			models = this.wrap(result.data);
 			if(callback) callback(models);
 		}
 	});
-	return models;
+	return this;
 };
 
 Model.SQL.findAll = function(type, callback) {
