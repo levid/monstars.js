@@ -17,6 +17,7 @@ this.Controller = new Class({
 		if(el == 'Document') el = document.body;
 		this.element = $(el) || new Element('div', { id: el}).inject(document.body); // or throw Error?
 		this.bindEvents();
+		this.element.store('$mvc:controller', this);
 		return _instances[this._controller_prefix()] = this;
     },
 	
@@ -55,5 +56,17 @@ this.Controller = new Class({
 	}
     
 });
+
+Controller.getInstance = function() {
+	return new this();
+};
+
+Element.Properties.controller = {
+	
+	get: function() {
+		return this.retrieve('$mvc:controller');
+	}
+	
+}
 
 })();
