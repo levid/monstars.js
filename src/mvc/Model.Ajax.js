@@ -104,6 +104,10 @@ Model.Ajax.get = function(type, options, callback) {
 
 Model.Ajax.find = function(conditions, options, callback) {
 	var that = this;
+	if($type(options) == 'function') {
+		callback = options;
+		options = null;
+	}
 	if(this.prototype.useFixtures) {
 		var uri = init.app_dir() + 'tests/fixtures/'+GetClass.get(this).toLowerCase()+'s.json';
 	} else {
