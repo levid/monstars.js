@@ -85,7 +85,7 @@ Model.Fields = {
 		Extends: Field,
 		
 		set: function(value) {
-			return $type(value) == 'object' ? value.id : value;
+			return $type(value) == 'object' ? (value.id || (value.get && value.get('id'))) : value;
 		},
 		
 		get: function(id) {
@@ -105,6 +105,49 @@ Model.Fields = {
 			type = options.type;
 		}
 		return new this._ForeignKey(type, options);
+	},
+	
+	_ManyToManyField: new Class({
+		
+		Extends: Field,
+		
+		set: function(value) {
+			var arr = [];
+			$splat(value).each(function(item) {
+				if($type(item) == 'object') {
+					arr.push(item.id || (item.get && item.get('id')));
+				} else {
+					arr.push(item);
+				}
+			});
+			return arr;
+		},
+		
+		get: function(array) {
+			var klass = this.options.type;
+			var arr = [];
+			$splat(array).each(function(id) {
+				if(klass.$cache && klass.$cache[id]) {
+					arr.push(klass.$cache[id]);
+				} else {
+					arr.push(new klass({ id: id }));
+				}
+			});
+			
+			return arr;
+		}
+		
+	}),
+	
+	ManyToManyField: function(type, options) {
+		if(!options && type.type) {
+			options = type;
+			type = options.type;
+		}
+		if($type(type) == 'string') {
+			type = window[type];
+		}
+		return new this._ManyToManyField(type, options);
 	}
 	
 };

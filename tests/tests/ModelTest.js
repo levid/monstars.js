@@ -78,6 +78,39 @@ var ModelTest = new TestCase({
 		this.assertEqual(b1.get('a'), a1, 'should be same instance if in cache');
 		
 	},
+	'ManyToManyField()': function() {
+		var A = new Class({
+			Extends: Model,
+			fields: {
+				id: Model.Fields.AutoField()
+			}
+		});
+		
+		var B = new Class({
+			Extends: Model,
+			fields: {
+				a: Model.Fields.ManyToManyField(A)
+			}
+		});
+		
+		var arr = [ new A({ id: 1 }), new A({ id:123 }), new A({ id: 444}) ];
+		var b1 = new B({ a: arr });
+		
+		this.assertTrue(b1.get('a') instanceof Array, 'should return an array');
+		this.assertEqual(b1.get('a').length, arr.length, 'should be same size as originally inputted array');
+		
+		this.assertTrue(b1.get('a')[0] instanceof A, 'each item should an instance of the related type');
+		this.assertEqual(b1.get('a')[0].get('id'), arr[0].get('id'), 'item should have the same id');
+		
+		var b2 = new B;
+		this.assertTrue(b2.get('a') instanceof Array, 'should return an empty array when nothing has been set');
+		this.assertEqual(b2.get('a').length, 0, 'empty array when nothing has been set');
+		
+		b2.set('a', [ 41, 3, 98]);
+		this.assertTrue(b2.get('a')[0] instanceof A, 'passing just numbers should convert them to type with that id');
+		this.assertEqual(b2.get('a')[0].get('id'),41, 'should have stored the correct id');
+		
+	},
 	'DateField()': function() {
 		var DateModel = new Class({
 			Extends: Model,
