@@ -144,6 +144,8 @@ var ModelTest = new TestCase({
 		this.assertEqual($type(model), 'array', 'should always return an array');
 		this.assertTrue(model[0] instanceof TestModel, 'should contain instances of the Model');
 		this.assertEqual(models[1].get('title'), two.title, 'should have properties set of Model');
+		model[0].set('title', 'yarrrrr');
+		this.assertEqual(models[0].get('title'), model[0].get('title'), 'should use the same instance if already in cache');
 		
 	},
 	'el.get(\'model\')': function() {

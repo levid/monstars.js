@@ -62,8 +62,8 @@ Model.wrap = function(models) {
 	var cache = this.$cache || (this.$cache = {});
 	
 	$splat(models).each(function(m) {
-		var inst = new that(m.$data || m);
-		that.$cache[inst.get('id')] = inst;
+		var id = (m.$data && m.$data.id) || m.id;
+		var inst = that.$cache[id] ? that.$cache[id].set(m.$data || m) : (that.$cache[id] = new that(m.$data || m));
 		instances.push(inst);
 	});
 	return instances;

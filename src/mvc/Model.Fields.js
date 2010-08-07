@@ -93,7 +93,7 @@ Model.Fields = {
 			if(klass.$cache && klass.$cache[id]) {
 				return klass.$cache[id];
 			} else {
-				return new klass({ id: id });
+				return klass.wrap({ id: id })[0];
 			}
 		}
 		
@@ -125,12 +125,15 @@ Model.Fields = {
 		
 		get: function(array) {
 			var klass = this.options.type;
+			if($type(klass) == 'string') {
+				klass = window[klass];
+			}
 			var arr = [];
 			$splat(array).each(function(id) {
 				if(klass.$cache && klass.$cache[id]) {
 					arr.push(klass.$cache[id]);
 				} else {
-					arr.push(new klass({ id: id }));
+					arr.push(klass.wrap({ id: id })[0]);
 				}
 			});
 			
@@ -144,9 +147,7 @@ Model.Fields = {
 			options = type;
 			type = options.type;
 		}
-		if($type(type) == 'string') {
-			type = window[type];
-		}
+		
 		return new this._ManyToManyField(type, options);
 	}
 	
