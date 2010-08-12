@@ -21,6 +21,18 @@ View.Helpers = $extend(View.Helpers, {
 		return date;
 	},
 	
+	excerpt: function(html, length) {
+		if (!length) length = 200;
+		var el = new Element('div', { 'html': html });
+		var para = el.getFirst('p');
+		if(para) {
+			var text = para.get('text');
+			return '<p>' + text.substring(0, Math.min(length, text.length)) + '...</p>';
+		} else {
+			return '<p>...</p>';
+		}
+	},
+	
 	input: function(type, name, value, placeholder) {
 		var opts = {
 			type: type,
