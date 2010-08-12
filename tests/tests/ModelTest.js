@@ -72,10 +72,17 @@ var ModelTest = new TestCase({
 		this.assertTrue(b1.get('a') instanceof A, 'value should be an instance of A');
 		this.assertNotEqual(b1.get('a'), a1, 'should create new instance if instance isn\'t in cache');
 		
-		A.$cache = {};
-		A.$cache[a1.get('id')] = a1;
+		A.wrap(a1);
+		this.assertEqual(b1.get('a').get('id'), a1.get('id'), 'should have same id');
+		this.assertEqual(b1.get('a').get('title'), a1.get('title'), 'should have same title');
 		
-		this.assertEqual(b1.get('a'), a1, 'should be same instance if in cache');
+		//this.assertEqual(b1.get('a'), a1, 'should be same instance if in cache');
+		
+		var a2 = new A({ id: 2, title:'a2'});
+		A.wrap(a2);
+		
+		b1.set('a_id', 2);
+		this.assertEqual(b1.get('a').get('title'), 'a2', 'should be able to set prop_id and everything just works');
 		
 	},
 	'ManyToManyField()': function() {

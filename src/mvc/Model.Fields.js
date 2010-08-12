@@ -7,7 +7,9 @@
 
 var Field = new Class({
 		
-	Implements: Options,
+	Implements: [GetClass, Options],
+	
+	$class: 'Model.Fields.Field',
 	
 	options: {
 		type: String,
@@ -84,8 +86,10 @@ Model.Fields = {
 		
 		Extends: Field,
 		
+		$class: 'Model.Fields.ForeignKey',
+		
 		set: function(value) {
-			return $type(value) == 'object' ? (value.id || (value.get && value.get('id'))) : value;
+			return $type(value) == 'object' ? this.options.type.wrap(value)[0] : value;
 		},
 		
 		get: function(id) {

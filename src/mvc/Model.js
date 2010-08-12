@@ -19,8 +19,16 @@ var Model = new Class({
 			for (var p in prop) this.set(p, prop[p]);
 			return this;
 		}
-		if(this.fields[prop]) {
-			this.$data[prop] = this.fields[prop].set($unlink(value));
+		if(prop) {
+			if(this.fields[prop]) {
+				this.$data[prop] = this.fields[prop].set($unlink(value));
+			} else if(prop.substring(prop.length - 3) == '_id') {
+				var trimmedProp = prop.substring(0, prop.length - 3),
+					relatedField = this.fields[trimmedProp];
+				if(relatedField && (relatedField.get_class() == 'Model.Fields.ForeignKey')) {
+					this.set(trimmedProp, value);
+				}
+			}
 		}
 		return this;
 	},
