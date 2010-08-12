@@ -93,7 +93,7 @@ var ModelTest = new TestCase({
 			}
 		});
 		
-		var arr = [ new A({ id: 1 }), new A({ id:123 }), new A({ id: 444}) ];
+		var arr = A.wrap([ { id: 1 }, { id:123 }, { id: 444}]);
 		var b1 = new B({ a: arr });
 		
 		this.assertTrue(b1.get('a') instanceof Array, 'should return an array');
@@ -106,10 +106,10 @@ var ModelTest = new TestCase({
 		this.assertTrue(b2.get('a') instanceof Array, 'should return an empty array when nothing has been set');
 		this.assertEqual(b2.get('a').length, 0, 'empty array when nothing has been set');
 		
-		b2.set('a', [ 41, 3, 98]);
+		b2.set('a', [ 41, 3, 98, 123]);
 		this.assertTrue(b2.get('a')[0] instanceof A, 'passing just numbers should convert them to type with that id');
 		this.assertEqual(b2.get('a')[0].get('id'),41, 'should have stored the correct id');
-		
+		this.assertEqual(b2.get('a')[3], arr[1], 'should have requested the stored instance from the $cache, if available');
 	},
 	'DateField()': function() {
 		var DateModel = new Class({

@@ -35,7 +35,7 @@ var Field = new Class({
 	}
 	
 });
-'2010-07-29T01:15:16.742000'
+
 var bigDateFormat = /(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?)?/
 var DateField = new Class({
 	
@@ -112,10 +112,16 @@ Model.Fields = {
 		Extends: Field,
 		
 		set: function(value) {
+			var klass = this.options.type;
+			if($type(klass) == 'string') {
+				klass = window[klass];
+			}
 			var arr = [];
 			$splat(value).each(function(item) {
 				if($type(item) == 'object') {
-					arr.push(item.id || (item.get && item.get('id')));
+					arr.push(klass.wrap(item)[0].get('id'));
+					; //ensures it gets added to the cache
+					
 				} else {
 					arr.push(item);
 				}
