@@ -15,11 +15,12 @@ var Model = new Class({
     },
 
     set: function(prop, value) {
-		if ($type(prop) == 'object'){
+		var type = $type(prop);
+		if (type == 'object' || type == 'hash'){
 			for (var p in prop) this.set(p, prop[p]);
 			return this;
 		}
-		if(prop) {
+		if(type == 'string') {
 			if(this.fields[prop]) {
 				this.$data[prop] = this.fields[prop].set($unlink(value));
 			} else if(prop.substring(prop.length - 3) == '_id') {
