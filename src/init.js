@@ -338,6 +338,10 @@ var init = (function() {
 				pub.queue(p, priv.ROOT.dir() + 'mvc');
 			})).apply(window, ['GetClass','Element.Serialize','Model','Model.Fields','Controller','View'].concat(Array.prototype.slice.apply(arguments)));
 		},
+		
+		lib: eachArg(function(p) { pub.queue(p, priv.APP_DIR + 'lib'); }),
+
+		
 		app: function(app_funcs) {
 			if(typeof app_funcs == 'function') {
 				app_funcs();

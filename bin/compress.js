@@ -91,6 +91,7 @@ var init = (function() {
 			if(typeof func == 'function') func();
 			include('src/mvc/Dispatcher.js');
 		},
+		lib: includeArgs(function(p) { return app_dir + 'lib/'+p+'.js' }),
 		models: includeArgs(function(p) { return app_dir + 'models/'+p+'.js' }),
 		controllers: includeArgs(function(p) { return app_dir + 'controllers/'+p+'Controller.js' }),
 		view: function(p) {
