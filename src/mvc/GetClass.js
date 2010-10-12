@@ -43,7 +43,7 @@ GetClass.get = (function() {
 		return null;
 	}
 	
-	var keyOf = (Browser.Engine.trident) ? (function() {
+	var keyOf = (Browser.ie) ? (function() {
 		var xhr = function(path) {
 			var request = window.ActiveXObject ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
 			request.open('GET', path, false); //asynchronous = false
@@ -105,5 +105,5 @@ GetClass.getName = function(obj) {
 GetClass.get_class = function(obj) {
 	return obj.$class ?
 		obj.$class :
-		obj.$class = (obj.constructor && GetClass.get(obj.constructor));
+		obj.$class = (obj.$constructor && GetClass.get(obj.$constructor));
 }

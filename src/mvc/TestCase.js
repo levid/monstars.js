@@ -3,8 +3,8 @@ var TestCase = new Class({
 	Implements: [Options, Events, GetClass],
 	
 	options: {
-		onSetup: $empty,
-		onTeardown: $empty
+		/*onSetup: function() {},
+		onTeardown: function() {}*/
 	},
 	
 	_queue: null,
@@ -17,7 +17,7 @@ var TestCase = new Class({
 	initialize: function(tests, options) {
 		this.setOptions(options);
 		
-		this.tests = new Hash(tests);
+		this.tests = tests;
 		
 	},
 	
@@ -47,8 +47,8 @@ var TestCase = new Class({
 	start: function() {
 		this._queue = [];
 		this._queue.push(this.build);
-		this.tests.each(function(test) {
-			if($type(test) != 'function') return;
+		Object.each(this.tests, function(test) {
+			if(typeOf(test) != 'function') return;
 			//run test
 			this._queue.push(function() {
 				this.fireEvent('setup');
@@ -78,7 +78,7 @@ var TestCase = new Class({
 	run: function(test) {
 		var asserts = this._asserts;
 		this._currentTest = test;
-		this._currentTestKey = this.tests.keyOf(test);
+		this._currentTestKey = Object.keyOf(this.tests, test);
 		try {
 			
 			test.apply(this);		
@@ -92,7 +92,7 @@ var TestCase = new Class({
 	
 	wait: function(delay) {
 		delay = delay || 10000;
-		$clear(this._resumeTimeout);
+		clearTimeout(this._resumeTimeout);
 		this._waitTimeout = (function() {
 			this.resume();
 			this.assertTrue(false, 'Async Test timed out');
@@ -102,7 +102,8 @@ var TestCase = new Class({
 	
 	resume: function() {
 		this.fireEvent('resume', this._currentTestKey);
-		this._waitTimeout = $clear(this._waitTimeout);
+		clearTimeout(this._waitTimeout)
+		this._waitTimeout = null;
 		this._resumeTimeout = this.execute.delay(13, this);
 	},
 	
@@ -141,7 +142,7 @@ var TestCase = new Class({
 		}
 		
 		var unitEl = new Element('div', { 'class' : 'unit-test closed '+unitStatus, text: this._currentTestKey });
-		$splat(results).each(function(result, i) {
+		Array.from(results).each(function(result, i) {
 			var testEl = new Element('div', { 'class' : 'test '+result.status, text: result.msg });
 			unitEl.grab(testEl);
 		});

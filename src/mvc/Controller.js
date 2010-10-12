@@ -25,7 +25,7 @@ this.Controller = new Class({
 		var events = this.events;
 		for(var prop in events) {			
 			var ev = prop.replace(/^on/,'');
-			if(prop != 'load' && $type(events[prop]) == 'function') {
+			if(prop != 'load' && typeOf(events[prop]) == 'function') {
 				this.element.addEvent(ev, events[prop].bind(this), true);
 			} else if (prop == 'load') {
 				window.addEvent('domready', events[prop].bind(this));
@@ -39,7 +39,7 @@ this.Controller = new Class({
 	
 	view: function(view_name, data) {
 		try {
-			if(!data && $type(view_name) != 'string') {
+			if(!data && typeOf(view_name) != 'string') {
 				data = view_name;
 				view_name = null;
 			}

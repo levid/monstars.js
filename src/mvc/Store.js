@@ -13,7 +13,7 @@ sessionStorage = sessionStorage || (function() {
 		keys = [];
 	return {
 		setItem: function (key, value) {
-			if(!$defined(data[key])) {
+			if(data[key] == null) {
 				this.length++;
 				keys.push(key);
 			}
@@ -64,7 +64,7 @@ localStorage = localStorage || (function() {
 		keys = [];
 	return {
 		setItem: function(key, value) {
-			if(!$defined(data[key])) {
+			if(data[key] == null) {
 				this.length++;
 				keys.push(key);
 			}
@@ -91,7 +91,7 @@ localStorage = localStorage || (function() {
 	}
 })();
 
-var userData = Browser.Engine.trident && (function() {
+var userData = Browser.ie && (function() {
 	var driver = new Element('span'),
 		PATH = 'mvc_storage_data',
 		NAME = 'data',
@@ -121,7 +121,7 @@ var userData = Browser.Engine.trident && (function() {
 	
 	return {
 		setItem: function(key, value) {
-			if(!$defined(data[key])) {
+			if(data[key] != null) {
 				this.length++;
 				keys.push(key);
 			}
@@ -155,7 +155,7 @@ this.Store = new Class({
 	
 	initialize: function(type) {
 		type = type || 'local';
-		if(Browser.Engine.trident/* && Browser.Engine.version <= 5*/) {
+		if(Browser.ie/* && Browser.Engine.version <= 5*/) {
 			type = 'userData';
 		}
 		switch(type) {

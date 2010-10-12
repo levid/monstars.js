@@ -23,7 +23,7 @@ Model.Ajax = new Class({
     _insert: function(callback) {
         var that = this;
         var success = function(response) {
-            $splat(response).each(function(obj) {
+            Array.from(response).each(function(obj) {
                 if(obj.fields) {
                     obj.fields.id = obj.fields.id || obj.pk || obj.id;
                     that.set(obj.fields)
@@ -48,9 +48,9 @@ Model.Ajax = new Class({
             url: url,
             method: 'post',
             onSuccess: function(response) {
-                if($type(success) == 'function')
+                if(typeOf(success) == 'function')
                     success(response);
-                if($type(callback) == 'function')
+                if(typeOf(callback) == 'function')
                     callback(that);
             }
         }).send({ data: this.getWriteableData() });
@@ -86,7 +86,7 @@ var _request = function(url, callback) {
 		url: uri,
 		method: 'get',
 		onSuccess: function(response) {
-			if($type(callback) == 'function') {
+			if(typeOf(callback) == 'function') {
 				callback(response);
 			}
 		},
@@ -94,7 +94,7 @@ var _request = function(url, callback) {
 			console.error(e);
 			callback([]);
 		}
-	});//.send(conditions && Hash.toQueryString(conditions));
+	});
 };
 
 Model.Ajax.get = function(type, options, callback) {
@@ -104,7 +104,7 @@ Model.Ajax.get = function(type, options, callback) {
 
 Model.Ajax.find = function(conditions, options, callback) {
 	var that = this;
-	if($type(options) == 'function') {
+	if(typeOf(options) == 'function') {
 		callback = options;
 		options = null;
 	}
@@ -121,7 +121,7 @@ Model.Ajax.find = function(conditions, options, callback) {
 		url: uri,
 		method: 'get',
 		onSuccess: function(response) {
-			if($type(callback) == 'function') {
+			if(typeOf(callback) == 'function') {
 				callback(that.wrap(response));
 			}
 		},
@@ -129,7 +129,7 @@ Model.Ajax.find = function(conditions, options, callback) {
 			console.error(e);
 			callback([]);
 		}
-	}).send(conditions && Hash.toQueryString(conditions));
+	}).send(conditions && Object.toQueryString(conditions));
 };
 
 Model.Ajax.findAll = function(callback) {

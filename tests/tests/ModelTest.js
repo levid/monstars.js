@@ -148,7 +148,7 @@ var ModelTest = new TestCase({
 		var model = TestModel.wrap(one),
 			models = TestModel.wrap([one, two]);
 			
-		this.assertEqual($type(model), 'array', 'should always return an array');
+		this.assertEqual(typeOf(model), 'array', 'should always return an array');
 		this.assertTrue(model[0] instanceof TestModel, 'should contain instances of the Model');
 		this.assertEqual(models[1].get('title'), two.title, 'should have properties set of Model');
 		model[0].set('title', 'yarrrrr');

@@ -15,7 +15,7 @@ Model.SQL = new Class({
     save: function(callback) {
         var db = Database.get();
 		var that = this,
-            data = $unlink(this.data);
+            data = Object.clone(this.data);
 		if(this.data.id) {
             var q = db.INSERT(this.tableize(),data);
         } else {
