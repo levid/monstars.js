@@ -43,7 +43,7 @@ this.Controller = new Class({
 				data = view_name;
 				view_name = null;
 			}
-			view_name = view_name || this._controller_prefix().toLowerCase() + '/' + arguments.callee.caller.caller.caller._name;
+			view_name = view_name || this._controller_prefix().toLowerCase() + '/' + arguments.callee.caller.caller.caller.$name;
 		} catch(e) {
 			throw new Error('View name was not specified, and could not determine from controller action.');
 		}

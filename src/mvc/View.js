@@ -7,10 +7,13 @@ var View = new Class({
 	
 	template: null,
 	
+	name: null,
+	
 	output: null,
     
     initialize: function(view) {
 		this.template = View.$cache[view] || (View.$cache[view] = this.process(init.view(view)));
+		this.name = view;
     },
 	
 	//if passed a function, we assume the function is a pre-compiled template.
