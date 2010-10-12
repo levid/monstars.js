@@ -1,9 +1,0 @@
-<ul id="ExpensesList">
-    <% expenses.each(function(e) { %>
-    <li class="expense <%=e.identity()%>">
-        <span class="title"><%=e.get('title')%></span> - $<%=e.get('price')%>
-        <p><%=e.get('description')%></p>
-        <a href="#" class="delete">Delete</a>
-    </li>
-    <% }); %>
-</ul>
