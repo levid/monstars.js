@@ -121,7 +121,7 @@ var userData = Browser.ie && (function() {
 	
 	return {
 		setItem: function(key, value) {
-			if(data[key] != null) {
+			if(data[key] == null) {
 				this.length++;
 				keys.push(key);
 			}
