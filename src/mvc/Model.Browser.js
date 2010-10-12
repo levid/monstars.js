@@ -19,7 +19,7 @@ Model.Browser = new Class({
     save: function(callback) {
         var modelStore = this.getTable();
 		if(!this.$data.id) {
-			var ids = Hash.getKeys(modelStore);
+			var ids = Object.keys(modelStore);
 			if(ids.length) {
 				ids.sort(function(a, b) {
 					return a < b ? 1 : a > b ? -1 : 0;
@@ -72,7 +72,7 @@ Model.Browser.find = function(conditions, options, callback) {
 	
 	var match = [];
 	//compare with condition
-	$each(models, function(model, id) {
+	Object.each(models, function(model, id) {
 		var matches = true;
 		for(var k in conditions) {
 			if(conditions.hasOwnProperty(k)) {

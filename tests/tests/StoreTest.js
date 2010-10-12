@@ -8,16 +8,16 @@ var testStorageAPI = function(store) {
 	store.setItem('other', value);
 	
 	this.assertEqual(store.getItem('test'), value, 'setItem and getItem should be able to retrieve a value with same key');
-	this.assertTrue($chk(store.key(0)), 'key() will return the key from a given index');
+	this.assertTrue(store.key(0), 'key() will return the key from a given index');
 	this.assertEqual(store.length(), 2, 'length should be 2 after adding 2 items')
 	
 	store.removeItem('other');
-	this.assertFalse($chk(store.getItem('other')), 'removeItem(key) should delete the key/value from the store');
+	this.assertFalse(store.getItem('other'), 'removeItem(key) should delete the key/value from the store');
 	this.assertEqual(store.length(), 1, 'length should be 1 now after removing 1 item');
 	
 	store.clear();
 	this.assertEqual(store.length(), 0, 'length should be 0 after clearing Store');
-	this.assertFalse($chk(store.getItem('test')), 'all key/value pairs should be gone after clear()');
+	this.assertFalse(store.getItem('test'), 'all key/value pairs should be gone after clear()');
 };
 
 this.StoreTest = new TestCase({

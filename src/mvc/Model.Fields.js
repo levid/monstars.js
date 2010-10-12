@@ -45,7 +45,7 @@ var DateField = new Class({
 	
 	set: function(value) {
 		var match;
-		if($type(value) == 'string' && (match = value.match(bigDateFormat))) {
+		if(typeOf(value) == 'string' && (match = value.match(bigDateFormat))) {
 			value = new Date(match[1], parseInt(match[2], 10) - 1, parseInt(match[3], 10), parseInt(match[4] || 0, 10), parseInt(match[5] || 0, 10), parseInt(match[6] || 0, 10));
 		}
 		return this.parent(value);
@@ -89,7 +89,7 @@ Model.Fields = {
 		$class: 'Model.Fields.ForeignKey',
 		
 		set: function(value) {
-			return $type(value) == 'object' ? this.options.type.wrap(value)[0] : value;
+			return typeOf(value) == 'object' ? this.options.type.wrap(value)[0] : value;
 		},
 		
 		get: function(id) {
@@ -117,12 +117,12 @@ Model.Fields = {
 		
 		set: function(value) {
 			var klass = this.options.type;
-			if($type(klass) == 'string') {
+			if(typeOf(klass) == 'string') {
 				klass = window[klass];
 			}
 			var arr = [];
-			$splat(value).each(function(item) {
-				if($type(item) == 'object') {
+			Array.from(value).each(function(item) {
+				if(typeOf(item) == 'object') {
 					arr.push(klass.wrap(item)[0].get('id'));
 					; //ensures it gets added to the cache
 					
@@ -135,11 +135,11 @@ Model.Fields = {
 		
 		get: function(array) {
 			var klass = this.options.type;
-			if($type(klass) == 'string') {
+			if(typeOf(klass) == 'string') {
 				klass = window[klass];
 			}
 			var arr = [];
-			$splat(array).each(function(id) {
+			Array.from(array).each(function(id) {
 				if(klass.$cache && klass.$cache[id]) {
 					arr.push(klass.$cache[id]);
 				} else {

@@ -1,5 +1,5 @@
 Element.implement('serialize', function() {
-	var values = new Hash({});
+	var values ={};
 	this.getElements("input, select, textarea",true).each(function(el){
 		if(!el.name || el.disabled || el.type=="submit" || el.type=="reset" || el.type=="file") return;
 		var n = (el.tagName.toLowerCase() == 'select') ?
@@ -7,8 +7,8 @@ Element.implement('serialize', function() {
 			((el.type == 'radio' || el.type == 'checkbox') && !el.checked) ?
 				null :
 				el.value;
-		$splat(n).each(function(val) {
-			if ($type(val) != 'undefined') {
+		Array.from(n).each(function(val) {
+			if (typeOf(val) != 'undefined') {
 				values[el.name] = val;
 			}
 		});

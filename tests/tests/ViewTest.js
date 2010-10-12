@@ -23,7 +23,7 @@ var ViewTest = new TestCase({
 		var echo_test = 'test view';
 		view.render({ echo: echo_test });
 
-		this.assertEqual($type($(view)), 'element', 'should return an element');
+		this.assertEqual(typeOf($(view)), 'element', 'should return an element');
 		var el = new Element('div');
 		el.grab(view);
 		this.assertTrue(el.getElement('.simple'), 'view instance can be used in element methods like grab, replaces, etc');

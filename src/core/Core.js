@@ -28,7 +28,7 @@ var Core = {
 (function() {
 var _oldExtends = Class.Mutators.Extends;
 Class.Mutators.Extends = function (parent){
-	var dont_overwrite = ['$family', 'implement', 'constructor'];
+	var dont_overwrite = ['$family','$class', 'implement', 'constructor'];
 	for(var k in parent) {
 		if(parent.hasOwnProperty(k) && dont_overwrite.indexOf(k) == -1)
 			this[k] = parent[k];
@@ -38,18 +38,3 @@ Class.Mutators.Extends = function (parent){
 };
 
 })();
-
-/*
-	These properties on Mutators blow up class if you try to define a method
-	on your class with the same name.
-	
-	Specifically, toString was gotcha'ing me.
-	
-	--Except, IE will never let me use this in a for..in block. Gaaaah!
-
-	--Can remove as soon as MooTools 1.3 is stable enough, because it provides a fix
-		in Class.js
-*/
-['toString', 'toLocaleString', 'valueOf', 'toSource', 'watch', 'unwatch', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable'].each(function(method){
-	Class.Mutators[method] = $arguments(0);
-});
