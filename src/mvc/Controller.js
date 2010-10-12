@@ -48,7 +48,7 @@ this.Controller = new Class({
 			throw new Error('View name was not specified, and could not determine from controller action.');
 		}
 		
-		return View.Helpers.view(view_name, data || this);
+		return View.Helpers.view(view_name, Object.clone(data || this));
 	}.protect(),
 	
 	toElement: function() {
