@@ -1,12 +1,12 @@
-Monstar Lab MVC
+monstars.js
 ===========
 
-A Javascript framework, using [MooTools](http://mootools.net) as the Core. Built for [Monstar Lab](http://monstarlab.com).
+A Javascript MVC framework, using [MooTools](http://mootools.net) as the Core. Built for [Monstar Lab](http://monstarlab.com).
 
 How to use
 ----------
 
-Models take care of all storage types, such as SQL, Ajax, XML, File, Storage, etc.
+Models take care of all storage types, such as SQL, Ajax, File, Storage, etc.
 
 		var Recipe = new Class({		
 				Extends: Model.Ajax,
@@ -22,7 +22,7 @@ Views are HTML written in ASP-like sytnax, that allows the execution of Javascri
 		<ul id="RecipesList">
 				<% recipes.each(function(r) { %>
 				<li class="recipe <%=r.identity()%>">
-						<h3><%=r.get(title)%></h3>
+						<h3><%=r.get('title')%></h3>
 						<%= view('recipes/ingredients', r.get('ingredients')); %>
 						<a href="#" class="delete">Delete</a>
 				</li>
@@ -44,7 +44,7 @@ Controllers handle all View events to make changes to the Model, and then re-ren
 						'click:relay(.recipe .delete)': function(e) {
 							e.preventDefault();
 							var recipeView = $(e.target).getParent('.recipe');
-							recipeView.model().destroy(function() {
+							recipeView.get('model').destroy(function() {
 								recipeView.destroy();
 							});
 						}
@@ -55,4 +55,4 @@ Controllers handle all View events to make changes to the Model, and then re-ren
 License
 -------
 
-MIT License. Copyright 2009-2010 [Sean McArthur](http://monstarlab.com).
+MIT License. Copyright 2009-2010 [Sean McArthur](http://seanmonstar.com).
