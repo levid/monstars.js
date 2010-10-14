@@ -32,7 +32,7 @@ var Dispatcher = new Class({
     }.protect(),
 	
 	create_controllers: function() {
-		var controllers = Core.retrieve_controllers();
+		var controllers = Controller.retrieve_controllers();
 		for(var c = 0; c < controllers.length; c++) {
 			new controllers[c]();
 		}

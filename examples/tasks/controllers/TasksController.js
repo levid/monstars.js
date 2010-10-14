@@ -37,4 +37,4 @@ var TasksController = new Class({
 	
 });
 
-Core.register_controller(TasksController);
+Controller.register_controller(TasksController);

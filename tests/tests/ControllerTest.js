@@ -20,6 +20,11 @@ var ControllerTest = new TestCase({
 		var tc = new this.TestController();
 		var view = tc.testView({ echo: 'hello' });
 		this.assertEqual(view.name, 'test/testView', 'should have auto-guessed the name by controller/method');
+	},
+	'register_controllers': function() {
+		Controller.register_controller(this.TestController);
+		var Cs = Controller.retrieve_controllers();
+		this.assertEqual(this.TestController, Cs[0], 'should keep track of controller');
 	}
 }, {
 	onSetup: function() {

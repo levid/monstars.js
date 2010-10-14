@@ -61,6 +61,23 @@ Controller.getInstance = function() {
 	return new this();
 };
 
+//TODO: this stuff should be handled automatically if you Extends: Controller
+Controller.$controllers = [];
+	
+Controller.register_controller = function(controller) {
+	if(this.$controllers.indexOf(controller) == -1)
+		this.$controllers.push(controller);
+};
+	
+Controller.retrieve_controllers = function() {
+	return this.$controllers;
+};
+	
+Controller.reset_controllers = function() {
+	this.$controllers = [];
+};
+	
+
 Element.Properties.controller = {
 	
 	get: function() {

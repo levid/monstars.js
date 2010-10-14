@@ -1,31 +1,15 @@
 /*
 	Core - Ties together core features of the MVC framework.
 */
-var Core = {
-	
-	version: '0.6.0',
-	
-	$controllers: [],
-	
-	register_controller: function(controller) {
-		if(this.$controllers.indexOf(controller) == -1)
-			this.$controllers.push(controller);
-	},
-	
-	retrieve_controllers: function() {
-		return this.$controllers;
-	},
-	
-	reset_controllers: function() {
-		this.$controllers = [];
-	}
-	
+var monstars = {
+	version: '0.6.1'
 };
 
 /*
 	Overwriting Extends mutator to copy static methods as well.
 */
 (function() {
+	
 var _oldExtends = Class.Mutators.Extends;
 Class.Mutators.Extends = function (parent){
 	var dont_overwrite = ['$family','$class', 'implement', 'constructor', '$constructor'];
