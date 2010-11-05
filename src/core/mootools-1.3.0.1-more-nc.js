@@ -1,15 +1,6 @@
 // MooTools: the javascript framework.
-// Load this file's selection again by visiting: http://mootools.net/more-rc/dc20adba967098f543f6550a2f248f41 
+// Load this file's selection again by visiting: http://mootools.net/more/dc20adba967098f543f6550a2f248f41 
 // Or build this file again with packager using: packager build More/Events.Pseudos More/Element.Event.Pseudos More/Element.Delegation
-/*
----
-copyrights:
-  - [MooTools](http://mootools.net)
-
-licenses:
-  - [MIT License](http://mootools.net/license.txt)
-...
-*/
 /*
 ---
 
@@ -39,8 +30,8 @@ provides: [MooTools.More]
 */
 
 MooTools.More = {
-	'version': '1.3.0.1rc1',
-	'build': '361dd6c3755b66898e9e0ee5d55c343188b619b7'
+	'version': '1.3.0.1',
+	'build': '6dce99bed2792dffcbbbb4ddc15a1fb9a41994b5'
 };
 
 

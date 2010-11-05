@@ -323,10 +323,7 @@ var init = (function() {
 			return pub;
 		},
 		core: function() {
-			var core_files = ['mootools-1.3-core','mootools-1.3.0.1rc1-more'];
-			//1.3b doesn't support Event Delegation, which Controllers use extensively
-			//so must wait to use 1.3
-			//var core_files = ['mootools-1.3b1.1-core','mootools-1.2.4.2-more']; 
+			var core_files = ['mootools-1.3-core','mootools-1.3.0.1-more'];
 			if(priv.env.test) {
 				core_files = (core_files.join('-nc|')+'-nc').split('|');
 			}
