@@ -1,12 +1,12 @@
 monstars.js
 ===========
 
-A Javascript MVC framework, using [MooTools](http://mootools.net) as the Core. Built for [Monstar Lab](http://monstarlab.com).
+A Javascript MVC framework, using [MooTools](http://mootools.net) as the Core. Learn more [here](http://seanmonstar.com/tagged/monstars.js).
 
 How to use
 ----------
 
-Models take care of all storage types, such as SQL, Ajax, File, Storage, etc.
+[Models](http://seanmonstar.com/post/1009142033/mvc-in-mootools-models) take care of all storage types, such as SQL, Ajax, File, Storage, etc.
 
 		var Recipe = new Class({		
 				Extends: Model.Ajax,
@@ -17,7 +17,7 @@ Models take care of all storage types, such as SQL, Ajax, File, Storage, etc.
 				}
 		});
 		
-Views are HTML written in ASP-like sytnax, that allows the execution of Javascript.
+[Views](http://seanmonstar.com/post/1053909313/mvc-in-mootools-views) are HTML written in ASP-like sytnax, that allows the execution of Javascript.
 
 		<ul id="RecipesList">
 				<% recipes.each(function(r) { %>
@@ -30,7 +30,7 @@ Views are HTML written in ASP-like sytnax, that allows the execution of Javascri
 		</ul>
 
 
-Controllers handle all View events to make changes to the Model, and then re-render the view. Controllers either specify an element, or use the name of the Controller to own an element. The controller then observes events delegated from within this container.
+[Controllers](http://seanmonstar.com/post/1349631987/mvc-in-mootools-controllers) handle all View events to make changes to the Model, and then re-render the view. Controllers either specify an element, or use the name of the Controller to own an element. The controller then observes events delegated from within this container.
 
 		var RecipesController = new Class({
 				list: function(recipes) {
