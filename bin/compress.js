@@ -4,7 +4,7 @@ if(!configFile) {
 	quit();
 }
 
-load('bin/mootools-1.2.4-core-server.js');
+load('bin/mootools-core-1.3-server.js');
 //load src/mvc/View so we can compile templates
 load('src/mvc/View.js');
 
@@ -95,16 +95,14 @@ var init = (function() {
 		models: includeArgs(function(p) { return app_dir + 'models/'+p+'.js' }),
 		controllers: includeArgs(function(p) { return app_dir + 'controllers/'+p+'Controller.js' }),
 		view: function(p) {
-			print('getting: ' + p);
-			return readFile(app_dir + 'views/'+p+'.html');			
+			var full_path = app_dir + 'views/'+p+'.html'
+			print('getting: ' + full_path);
+			return readFile(full_path);			
 		},
 		views: args(function(p) {
-			//TODO -
-			//process viewSrc into new Function()
-			//write new Function().toString() to src.
 			print('init.view('+p+')');
 			var v = new View(p);
-			print(v);
+			print('got view');
 			view = {
 				'path': p,
 				'function': v.template.toString()
