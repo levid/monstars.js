@@ -34,14 +34,16 @@ var GetClass = new Class({
 
 GetClass.get = (function() {
 	var search = function(obj, keys) {
-		context = keys || window;
+		var context = keys || window;
 		for(var key in context) {
 			try {			
-				if(window[key] === obj) return key
+				if(window[key] === obj) {
+					return key;
+				}
 			} catch(e) { /*sessionStore*/ }
 		}
 		return null;
-	}
+	};
 	
 	var keyOf = (Browser.ie) ? (function() {
 		var xhr = function(path) {
@@ -52,7 +54,7 @@ GetClass.get = (function() {
 			} catch(e) { return null; }
 			if ( request.status == 500 || request.status == 404 || request.status == 2 ||(request.status == 0 && request.responseText == '') ) return null;
 			return request.responseText;
-		}
+		};
 		
 		var cash = {};
 		
@@ -88,7 +90,7 @@ GetClass.get = (function() {
 				}
 			}
 			return key;
-		}
+		};
 		
 		
 		return ie_search;
@@ -100,10 +102,10 @@ GetClass.get = (function() {
 GetClass.getName = function(obj) {
 	return obj.$name ?
 		obj.$name :
-		obj.$name = obj.prototype.$class || GetClass.get(obj)
+		obj.$name = obj.prototype.$class || GetClass.get(obj);
 };
 GetClass.get_class = function(obj) {
 	return obj.$class ?
 		obj.$class :
 		obj.$class = (obj.$constructor && GetClass.get(obj.$constructor));
-}
+};

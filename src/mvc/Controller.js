@@ -9,7 +9,7 @@ this.Controller = new Class({
 	element: null,
     
     initialize: function() {
-		var instance = _instances[this._controller_prefix()]
+		var instance = _instances[this._controller_prefix()];
 		if(instance) {
 			return instance;
 		}
@@ -84,6 +84,6 @@ Element.Properties.controller = {
 		return this.retrieve('$mvc:controller');
 	}
 	
-}
+};
 
 })();
