@@ -80,7 +80,7 @@ var init = (function() {
 		core: function() {
 			(includeArgs(function(p) {
 				return 'src/core/'+p+'.js';
-			}))('mootools-1.2.4-core-nc','mootools-1.2.4.2-more-nc','Core');
+			}))('mootools-1.3-core-nc','mootools-1.3.0.1-more-nc','Core');
 		},
 		mvc: function() {
 			(includeArgs(function(p) {
