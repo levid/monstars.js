@@ -204,4 +204,4 @@ this.Store = new Class({
 	
 });
 
-})()
+})();
