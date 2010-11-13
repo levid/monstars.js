@@ -1,0 +1,5 @@
+#ExpensesList { border:1px solid #f33; padding:0 10px; }
+	#ExpensesList li { list-style:none; margin:10px 0; padding:10px; border:1px solid #ccc; }
+	#ExpensesList li:hover { background-color:#ffe; }
+	
+		#ExpensesList li .title { font-weight:bold; }
