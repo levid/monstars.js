@@ -18,6 +18,13 @@ var ViewTest = new TestCase({
 		this.assertTrue(el.hasClass('simple'), 'the element should have the class from the template file');
 		this.assertEqual(el.get('text').trim(), echo_test, 'the values passed to render should be used in the template');
 	},
+	'render escape': function() {
+		var view = new View('complex');
+		
+		var html = view.render({ echo: 'd', escape: '<script type="javascript">alert("woops")</script>' });
+		
+		this.assertEqual($(view).getElement('span').getChildren().length, 0, 'should escape the html so its just a text node');
+	},
 	'to Element': function() {
 		var view = new View('simple');
 		var echo_test = 'test view';
@@ -45,7 +52,7 @@ var ViewTest = new TestCase({
 		var view = new View('complex');
 		var echo_test = 'complex test view';
 		
-		var html = view.render({ echo: echo_test });
+		var html = view.render({ echo: echo_test, escape: '' });
 		this.assertTrue(html, 'should return a string');
 		
 		var el = $(view);

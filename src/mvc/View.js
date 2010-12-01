@@ -28,6 +28,7 @@ var View = new Class({
 					.split("<%").join("\t")
 					.replace(/((^|%>)[^\t]*)'/g, "$1\r")
 					.replace(/\t=(.*?)%>/g, "',$1,'")
+					.replace(/\t:(.*?)%>/g, "',document.createElement('div').appendChild(document.createTextNode($1)).parentNode.innerHTML,'")
 					.split("\t").join("');")
 					.split("%>").join("p.push('")
 					.split("\r").join("\\'")
