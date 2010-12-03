@@ -15,24 +15,17 @@ var Model = new Class({
     },
 
     set: function(prop, value) {
-		var type = typeOf(prop);
-		if (type == 'object' || type == 'hash'){
-			for (var p in prop) this.set(p, prop[p]);
-			return this;
-		}
-		if(type == 'string') {
-			if(this.fields[prop]) {
-				this.$data[prop] = this.fields[prop].set(value);
-			} else if(prop.substring(prop.length - 3) == '_id') {
-				var trimmedProp = prop.substring(0, prop.length - 3),
-					relatedField = this.fields[trimmedProp];
-				if(relatedField && (relatedField.get_class() == 'Model.Fields.ForeignKey')) {
-					this.set(trimmedProp, value);
-				}
+		if(this.fields[prop]) {
+			this.$data[prop] = this.fields[prop].set(value);
+		} else if(prop.substring(prop.length - 3) == '_id') {
+			var trimmedProp = prop.substring(0, prop.length - 3),
+				relatedField = this.fields[trimmedProp];
+			if(relatedField && (relatedField.get_class() == 'Model.Fields.ForeignKey')) {
+				this.set(trimmedProp, value);
 			}
 		}
 		return this;
-	},
+	}.overloadSetter(),
     
     get: function(prop) {
     	return this.fields[prop] && this.fields[prop].get(this.$data[prop])
