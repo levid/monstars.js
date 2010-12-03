@@ -1,7 +1,7 @@
 monstars.js
 ===========
 
-A Javascript MVC framework, using [MooTools](http://mootools.net) as the Core. [Documentation](http://seanmonstar.github.com/monstars.js), a [demo](http://seanmonstar.github.com/monstars.js/demo/), and [blog posts](http://seanmonstar.com/tagged/monstars.js).
+A Javascript MVC framework, using [MooTools](http://mootools.net) as the Core. [Documentation](http://seanmonstar.github.com/monstars.js), a [demo](http://seanmonstar.github.com/monstars.js/examples/tasks/), and [blog posts](http://seanmonstar.com/tagged/monstars.js).
 
 How to use
 ----------
