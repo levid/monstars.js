@@ -46,7 +46,7 @@ var DateField = new Class({
 	set: function(value) {
 		var match;
 		if(typeOf(value) == 'string' && (match = value.match(bigDateFormat))) {
-			value = new Date(match[1], parseInt(match[2], 10) - 1, parseInt(match[3], 10), parseInt(match[4] || 0, 10), parseInt(match[5] || 0, 10), parseInt(match[6] || 0, 10));
+			value = new Date(Date.UTC(match[1], parseInt(match[2], 10) - 1, parseInt(match[3], 10), parseInt(match[4] || 0, 10), parseInt(match[5] || 0, 10), parseInt(match[6] || 0, 10)));
 		}
 		return this.parent(value);
 	},
