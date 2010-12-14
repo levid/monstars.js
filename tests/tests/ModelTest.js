@@ -20,6 +20,20 @@ var ModelTest = new TestCase({
 		m.set('title', null);
 		this.assertNull(m.get('title'), 'assigning null to a value should store null, not an empty object of that Type');
 	},
+	'event onPropertyChange': function() {
+		var m = new TestModel({id: 44123, title:'Init Test'});
+		var changedProp = null;
+		m.addEvent('propertyChange', function(property) {
+			changedProp = property;
+		});
+		
+		m.set('title', 'something else');
+		this.assertEqual(changedProp, 'title', 'should fire and pass property name when value changes');
+		
+		changedProp = null;
+		m.set('title', m.get('title'));
+		this.assertNull(changedProp, 'should not fire if the value stayed the same');
+	},
 	'Model.Fields': function() {
 		var FieldModel = new Class({
 			Extends: Model,

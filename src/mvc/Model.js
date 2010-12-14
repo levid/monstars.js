@@ -4,7 +4,7 @@
 */
 var Model = new Class({
     
-    Implements: [GetClass],
+    Implements: [Events, GetClass],
     
     $data: {}, //private object to hold data
 	
@@ -16,7 +16,12 @@ var Model = new Class({
 
     set: function(prop, value) {
 		if(this.fields[prop]) {
-			this.$data[prop] = this.fields[prop].set(value);
+			var oldValue = this.$data[prop];
+			var newValue = this.$data[prop] = this.fields[prop].set(value);
+			if((oldValue && oldValue.valueOf()) != (newValue && newValue.valueOf())) {
+				console.log(oldValue, newValue);
+				this.fireEvent('propertyChange', prop);
+			}
 		} else if(prop.substring(prop.length - 3) == '_id') {
 			var trimmedProp = prop.substring(0, prop.length - 3),
 				relatedField = this.fields[trimmedProp];
