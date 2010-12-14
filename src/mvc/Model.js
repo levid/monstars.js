@@ -19,7 +19,6 @@ var Model = new Class({
 			var oldValue = this.$data[prop];
 			var newValue = this.$data[prop] = this.fields[prop].set(value);
 			if((oldValue && oldValue.valueOf()) != (newValue && newValue.valueOf())) {
-				console.log(oldValue, newValue);
 				this.fireEvent('propertyChange', prop);
 			}
 		} else if(prop.substring(prop.length - 3) == '_id') {
