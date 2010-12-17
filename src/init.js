@@ -35,7 +35,7 @@ var init = (function() {
 			priv.PAGE = new Script(window.location.href);
 			priv.set_environment(self);
 			priv.domready();
-			if(priv.env.compress || priv.env.deploy) {
+			if(priv.env.compress) {
 				pub.queue('compressed.js', priv.get_app_dir(self));
 			} else {
 				pub.queue('config.js',priv.get_app_dir(self));
@@ -60,7 +60,14 @@ var init = (function() {
 		set_environment: function(self_script) {
 			var options = self_script.query().split(',');
 			priv.env.test = (options.indexOf('test') !== -1);
-			priv.env.compress = (options.indexOf('compress') !== -1);
+			var compress_values = ['compress', 'production', 'deploy'];
+			for (var i = 0; i < compress_values.length; i++) {
+				if(options.indexOf('compress') !== -1) {
+					priv.env.compress = true;
+					break;
+				}
+			}
+			
 		},
 		
 		get_app_dir: function(init_script) {
