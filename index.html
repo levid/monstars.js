@@ -46,13 +46,15 @@ init.app(function() {
 		<h2 id="init">init.js</h2>
 		<p>The init.js is the only file you need to directly specify in your HTML page. After passing it some paramaters after the query mark, it will load in the rest of your application for you.</p>
 		<p>To inform init.js about the rest of your application, you pass information as semi pseudo GET variables. Except they aren't variables. Simply, the first thing after the question mark is the path to your application's config.js file. Following a comma, you can also tell init.js if the mode is test/development, or production. Here's an example script tag:</p>
-		<pre>&lt;script src="/js/system/init.js?/js/app,development" type="text/javascript">&lt;/script></pre>
+		<pre><script src="/js/system/init.js?/js/app,development" type="text/javascript"></script></pre>
 		
 		<h2 id="Model">Model</h2>
 		<p><strong>Models</strong> represent the actual data that an application will be using. It collects related information about a single object, and provides an easy and powerful API to access that information. Models also abstract away the specifics of where the data is stored. Whether you store the data on a server and need Ajax requests to fetch it, or you store it in the local SQLite database, the public API for Models stays the same, so the rest of your application can blissfully ignorant.</p>
 		
 		<h3 id="Model_constructor">constructor</h3>
+		<p>Can be called with an object of properties.</p>
 		<h3 id="Model_set">set</h3>
+		<p>Can be passed a <code>property</code> and <code>value</code>, or an object or key/value pairs.</p>
 		<h3 id="Model_get">get</h3>
 		<h3 id="Model_save">save</h3>
 		<h3 id="Model_destroy">destroy</h3>
