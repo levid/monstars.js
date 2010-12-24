@@ -144,10 +144,10 @@ var ModelTest = new TestCase({
 		this.assertEqual(m1.get('timestamp'), now, 'should accept Date instances');
 		
 		var m2 = new DateModel({ timestamp: '2007-03-15' });
-		this.assertEqual(+m2.get('timestamp'), +new Date(2007, 2, 15), 'should accept YYYY-MM-DD format');
+		this.assertEqual(+m2.get('timestamp'), +new Date(Date.UTC(2007, 2, 15)), 'should accept YYYY-MM-DD format');
 		
 		var m3 = new DateModel({ timestamp: '2010-07-29T01:15:16.742000' });
-		this.assertEqual(+m3.get('timestamp'), +new Date(2010,6,29,1,15,16), 'should accept YYYY-MM-DDTHH:MM:SS.MIRCOSECONDS')
+		this.assertEqual(+m3.get('timestamp'), +new Date(Date.UTC(2010,6,29,1,15,16)), 'should accept YYYY-MM-DDTHH:MM:SS.MIRCOSECONDS')
 		
 	},
 	'identity': function() {
