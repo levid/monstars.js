@@ -89,7 +89,9 @@ Model.Fields = {
 		$class: 'Model.Fields.ForeignKey',
 		
 		set: function(value) {
-			return typeOf(value) == 'object' ? this.options.type.wrap(value)[0] : value;
+			var relatedModel = this.options.type;
+			
+			return typeOf(value) == 'object' ? relatedModel.wrap(value)[0].get('id') : value;
 		},
 		
 		get: function(id) {
