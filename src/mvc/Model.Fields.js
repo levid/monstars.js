@@ -123,8 +123,7 @@ Model.Fields = {
 			var arr = [];
 			Array.from(value).each(function(item) {
 				if(typeOf(item) == 'object') {
-					arr.push(klass.wrap(item)[0].get('id'));
-					; //ensures it gets added to the cache
+					arr.push(klass.wrap(item)[0].get('id')); //ensures it gets added to the cache
 					
 				} else {
 					arr.push(item);
