@@ -12,16 +12,13 @@ java -cp bin\js.jar org.mozilla.javascript.tools.shell.Main bin\app.js %2 %3
 GOTO END
 
 :COMPRESS
-java -cp bin\js.jar org.mozilla.javascript.tools.shell.Main bin\compress.js %2
-SET config=%2
-SET packed=%config:config.js=packed.js%
-SET compressed=%config:config.js=compressed.js%
-java -jar bin\yuicompressor-2.4.2.jar --line-break 4096 -o %compressed% %packed% 
+java -cp bin\js.jar org.mozilla.javascript.tools.shell.Main bin\compress.js %2config.js
+java -jar bin\yuicompressor-2.4.2.jar --line-break 4096 -o %2compressed.js %2packed.js
 GOTO END
 
 :HELP
-echo Command Lists:
-echo js compress [path] Builds a compressed file of all files in config.
-echo js app [name] Generates a directory with a skeleton model, controller, and views for [name].
+echo Command List:
+echo js compress [path] - Builds a compressed file of all files in config.
+echo js app [name] - Generates a directory with a skeleton model, controller, and views for [name].
 
 :END
