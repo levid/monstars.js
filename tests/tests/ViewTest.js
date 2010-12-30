@@ -60,7 +60,7 @@ var ViewTest = new TestCase({
 		this.assertTrue(el.getElement('div'), 'should have markup from subview');
 		this.assertTrue(el.getElement('.test').hasClass('simple'), 'should use classnames from subview');
 		this.assertEqual(el.getElement('.test').get('text').trim(), echo_test, 'should use data in subview');
-	},
+	}/*,
 	'bind model properties': function() {
 		var BindModel = new Class({
 			Extends: Model,
@@ -78,7 +78,7 @@ var ViewTest = new TestCase({
 		var el = $(view);
 		this.assertTrue(el.hasClass(model.get('num')), 'should insert the current value into attributes on toElement');
 		this.assertEqual(el.get('text').trim(), el.get('title').trim(), 'should insert the current value into attributes on toElement');
-	}
+	}*/
 }, {
 	onSetup: function() {
 		

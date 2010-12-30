@@ -10,9 +10,9 @@ Date.prototype.format=function(format){var returnStr='';var replace=Date.replace
 
 Object.append(View.Helpers, {
 	
-	bind: function(model, property) {
+	/*bind: function(model, property) {
 		
-	},
+	},*/
 	
 	link_to: function(text, href) {
 		return '<a href="'+href+'">'+text+'</a>';
