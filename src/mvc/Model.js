@@ -19,7 +19,7 @@ var Model = new Class({
 			var oldValue = this.$data[prop];
 			var newValue = this.$data[prop] = this.fields[prop].set(value);
 			if((oldValue && oldValue.valueOf()) != (newValue && newValue.valueOf())) {
-				this.fireEvent('propertyChange', prop);
+				this.fireEvent('propertyChange', [prop, newValue, oldValue]);
 			}
 		} else if(prop.substring(prop.length - 3) == '_id') {
 			var trimmedProp = prop.substring(0, prop.length - 3),
