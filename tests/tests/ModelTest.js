@@ -34,6 +34,28 @@ var ModelTest = new TestCase({
 		m.set('title', m.get('title'));
 		this.assertNull(changedProp, 'should not fire if the value stayed the same');
 	},
+	'propertyChange:property(prop) psuedo': function() {
+		var origValue = 'Init Test',
+			oldValue = null,
+			newValue = null;
+		
+		var m = new TestModel({id: 44123, title:origValue});
+		
+		m.addEvent('propertyChange:property(title)', function(newVal, oldVal) {
+			oldValue = oldVal;
+			newValue = newVal;
+		});
+		
+		var testValue = 'something else';
+		m.set('title', testValue);
+		this.assertTrue(newValue, 'should fire if property changed matches the value in the psuedo');
+		this.assertEqual(newValue, testValue, 'should pass the newValue as first argument');
+		this.assertEqual(origValue, oldValue, 'should pass the oldValue as second argument');
+		
+		newValue = null;
+		m.set('id', 5678);
+		this.assertNull(newValue, 'should not fire if the changed property doesnt match the value in the psuedo');
+	},
 	'Model.Fields': function() {
 		var FieldModel = new Class({
 			Extends: Model,

@@ -108,3 +108,12 @@ Element.Properties.model = {
 		return null;
 	}
 };
+
+Events.definePseudo('property', function(split, fn, args) {
+	var propToLookFor = split.value,
+		propFired = args[0];
+
+	if(propToLookFor == propFired) {
+		fn.call(this, args[1], args[2])
+	}
+});
