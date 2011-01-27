@@ -58,20 +58,13 @@ var init = (function() {
 		},
 		
 		set_environment: function(self_script) {
-			var options = self_script.query().split(',');
-			priv.env.test = (options.indexOf('test') !== -1);
-			var compress_values = ['compress', 'production', 'deploy'];
-			for (var i = 0; i < compress_values.length; i++) {
-				if(options.indexOf('compress') !== -1) {
-					priv.env.compress = true;
-					break;
-				}
-			}
-			
+			var options = self_script.options();
+			priv.env.test = options.test;
+			priv.env.compress = options.compress || options.production || options.deploy;
 		},
 		
 		get_app_dir: function(init_script) {
-			var path = init_script.query().split(',')[0];
+			var path = init_script.options().app;
 			if(!path)
 				throw new Error('Must include app directory after init.js');
 			
@@ -254,7 +247,7 @@ var init = (function() {
 		},
 		
 		dir: function() {
-			return this.fileName.replace('?'+this.query(),'').replace(/[^\/]+$/, '');//(/[a-zA-Z0-9\-_]+\.js(.*)$/,'');
+			return this.fileName.replace('?'+this.query(),'').replace('#'+this.hash(), '').replace(/[^\/]+$/, '');//(/[a-zA-Z0-9\-_]+\.js(.*)$/,'');
 		},
 		
 		query: function() {
@@ -263,8 +256,28 @@ var init = (function() {
 				q = this.fileName.match(/\?(.*)$/)[1];
 			} catch(e) {}
 			return q;			
-		}
-		
+		},
+        
+        hash: function() {
+            var h;
+            try {
+                h = this.fileName.match(/\#(.*)$/)[1];
+            } catch(e) {}
+            return h;
+        },
+        
+        options: function() {
+            var raw = this.query() || this.hash(),
+                options = {},
+                split = raw.split(',');
+            
+            options.app = split.shift();
+            for (var i = 0; i < split.length; i++) {
+                options[split[i]] = true;
+            }
+            
+            return options;
+        }
 	};
 	
 	var eachArg = function(func) {
