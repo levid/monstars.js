@@ -36,7 +36,7 @@ var View = new Class({
 	}.protect(),
     
     render: function(data) {
-		this.output = data ? this.template(Object.merge(data, View.Helpers)) : this.template(View.Helpers);
+		this.output = data ? this.template(Object.merge({}, data, View.Helpers)) : this.template(View.Helpers);
 		this.fireEvent('render');
 		return this;
     },
