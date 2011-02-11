@@ -22,7 +22,7 @@ var init = (function() {
 		
 		use_preload: (function() {
 			var is_opera = window.opera && Object.prototype.toString.call(window.opera) == "[object Opera]",
-				is_gecko =  (function(o) { o[o] = o+""; return o[o] != o+""; })(new String("__count__"));
+				is_gecko =  navigator.userAgent.indexOf('Firefox') >= 0;
 			//firefox and opera keep executing order. and firefox doesnt
 			// fire onload with a fake mimeType.
 			return function() {
