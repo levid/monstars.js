@@ -14,7 +14,7 @@ this.Controller = new Class({
 			return instance;
 		}
 		var el = this.element || this._controller_prefix();
-		if(el == 'Document') el = document.body;
+		if(el == 'Document') el = window;
 		this.element = $(el) || new Element('div', { id: el}).inject(document.body); // or throw Error?
 		this.bindEvents();
 		this.element.store('$mvc:controller', this);
