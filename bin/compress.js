@@ -66,7 +66,33 @@ var init = (function() {
 		quit();
 	};
 	
-	var pub = {
+	var extend = function(parent, child) {
+		for(var i in child) {
+			if(child.hasOwnProperty(i)) {
+				parent[i] = child[i];
+			}
+		}
+	};
+	
+	var pub = function(config) {
+		if(config && typeof config == 'object') {
+			pub.core();
+			var app = false;
+			for(var i in config) {
+				if(typeof pub[i] == 'function') {
+					pub[i].apply(pub, config[i]);
+					if(i == 'controllers') {
+						app = true;
+					}
+				}
+			}
+			if(app) {
+				pub.app();
+			}
+		}
+	};
+	
+	extend(pub, {
 		start: function(path) {
 			var config = new File(path);
 			app_dir = config.dir();

@@ -308,7 +308,23 @@ var init = (function() {
 		};
 	}
 	
-	var pub = function init() {
+	var pub = function init(config) {
+		if(config && typeof config == 'object') {
+			pub.core();
+			var app = false;
+			for(var i in config) {
+				if(typeof pub[i] == 'function') {
+					pub[i].apply(pub, config[i]);
+					if(i == 'controllers') {
+						app = true;
+					}
+				}
+			}
+			if(app) {
+				pub.app();
+			}
+		}
+		
 		return pub.queue(arguments, priv.APP_DIR);
 	};
 
