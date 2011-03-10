@@ -18,12 +18,20 @@ var ViewTest = new TestCase({
 		this.assertTrue(el.hasClass('simple'), 'the element should have the class from the template file');
 		this.assertEqual(el.get('text').trim(), echo_test, 'the values passed to render should be used in the template');
 	},
-	'render escape': function() {
+	'render : operator': function() {
 		var view = new View('complex');
 		
 		var html = view.render({ echo: 'd', escape: '<script type="javascript">alert("woops")</script>' });
 		
 		this.assertEqual($(view).getElement('span').getChildren().length, 0, 'should escape the html so its just a text node');
+	},
+	'render ? operator ': function() {
+		var view = new View('suppress');
+		
+		var html = view.render({ echo: 'hello' });
+		
+		this.assertTrue($(view), 'should not error if variable is not defined')
+		this.assertEqual($(view).get('text').trim(), 'hello', 'should print variables that are defined');
 	},
 	'to Element': function() {
 		var view = new View('simple');
